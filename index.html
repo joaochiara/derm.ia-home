@@ -1944,16 +1944,309 @@
 </div>
 
 <!-- FOOTER -->
-<footer>
-  <a href="#" class="footer-logo">derm<span>.ia</span></a>
-  <ul class="footer-links">
-    <li><a href="#">Como funciona</a></li>
-    <li><a href="#">Planos</a></li>
-    <li><a href="#">Privacidade</a></li>
-    <li><a href="#">Termos de uso</a></li>
-    <li><a href="#">Contato</a></li>
-  </ul>
-  <p class="footer-copy">© 2025 derm.ia — Todos os direitos reservados.</p>
+<footer id="site-footer">
+  <style>
+    #site-footer {
+      width: 100%;
+      font-family: var(--sans);
+      position: relative;
+      margin-top: auto;
+      padding-top: 35px;
+      height: 150px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      overflow: visible;
+      z-index: 2;
+      transition: none;
+    }
+    #site-footer.footer-ready {
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+    }
+    #site-footer.footer-hiding {
+      transform: translateY(60px);
+      opacity: 0;
+    }
+    #site-footer.footer-entering {
+      animation: footerEnter 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes footerEnter {
+      from { transform: translateY(60px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    /* Cobre o canvas fixo além do footer */
+    #footer-canvas-cover {
+      display: none;
+    }
+
+    /* SVG de fundo: forma única footer + orelha */
+    #footer-shape {
+      position: absolute;
+      top: -32px;
+      left: 0;
+      width: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: visible;
+    }
+
+    /* Blur layer com máscara na forma do footer+orelha */
+    #footer-blur-layer {
+      position: absolute;
+      top: -32px;
+      left: 0; right: 0;
+      bottom: 0;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Conteúdo acima do SVG */
+    #site-footer > *:not(#footer-blur-layer):not(#footer-shape):not(#footer-canvas-cover) {
+      position: relative;
+      z-index: 2;
+    }
+
+    body { padding-bottom: 0; }
+
+    /* ── Barra inferior ── */
+    .footer-bar {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 32px;
+      border-top: 1px solid rgba(247,242,234,0.55);
+    }
+    .footer-copy {
+      font-family: var(--sans); font-size: 12px; font-weight: 300;
+      letter-spacing: 0.05em; color: var(--ivory); white-space: nowrap;
+    }
+    .footer-copy strong { color: var(--ivory); font-weight: 500; }
+    .footer-copy-highlight {
+      font-weight: 500;
+      color: var(--ivory); letter-spacing: 0.03em;
+    }
+
+    @media (max-width: 580px) {
+      .footer-bar { padding: 0 16px; }
+      .footer-copy { font-size: 12px; }
+    }
+
+    /* ── Área acima da linha: segura o botão pílula ── */
+    .footer-wa-wrap {
+      position: relative; z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      flex: 1;
+      margin-bottom: 15px;
+    }
+
+    /* ── Botão pílula WhatsApp ── */
+    .footer-wa-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--sans);
+      font-size: 12.6px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--ink-soft, #5c4a3a);
+      background: rgba(253,250,247,0.70);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.60);
+      padding: 6.3px 14.7px;
+      border-radius: 100px;
+      box-shadow: 0 2px 8px rgba(24,16,14,0.07), inset 0 1px 0 rgba(255,255,255,0.8);
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      white-space: nowrap;
+    }
+    .footer-wa-pill:hover {
+      transform: scale(1.06);
+    }
+    .footer-wa-pill svg { flex-shrink: 0; }
+
+    /* ── Hover upscale: botões flutuantes ── */
+    #whatsapp-btn:hover,
+    #sound-toggle:hover {
+      transform: scale(1.13) !important;
+    }
+  </style>
+
+  <!-- Cobertura do canvas além do footer -->
+  <div id="footer-canvas-cover"></div>
+
+  <!-- SVG: forma única (footer + orelha trapezoidal) -->
+  <svg id="footer-shape" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="footer-shadow" x="-5%" y="-40%" width="110%" height="160%">
+        <feDropShadow dx="0" dy="-6" stdDeviation="12" flood-color="rgba(24,16,14,0.10)"/>
+      </filter>
+    </defs>
+    <path id="footer-path-fill"
+      fill="rgba(247,242,234,0.30)"
+      stroke="rgba(255,255,255,0.55)"
+      stroke-width="1.5"
+      filter="url(#footer-shadow)"
+    />
+    <path id="footer-path-gloss" fill="rgba(255,255,255,0.13)" stroke="none"/>
+  </svg>
+
+  <!-- Pílula WhatsApp — acima da linha marfim -->
+  <div class="footer-wa-wrap">
+    <a href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer" class="footer-wa-pill">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 175.216 175.552" width="15" height="15"><defs><linearGradient id="wa-b" x1="85.915" x2="86.535" y1="32.567" y2="137.092" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#57d163"/><stop offset="1" stop-color="#23b33a"/></linearGradient><filter id="wa-a" width="1.115" height="1.114" x="-.057" y="-.057" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="3.531"/></filter></defs><path fill="#b3b3b3" d="m54.532 138.45 2.235 1.324c9.387 5.571 20.15 8.518 31.126 8.523h.023c33.707 0 61.139-27.426 61.153-61.135.006-16.335-6.349-31.696-17.895-43.251A60.75 60.75 0 0 0 87.94 25.983c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.312-6.179 22.558zm-40.811 23.544L24.16 123.88c-6.438-11.154-9.825-23.808-9.821-36.772.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954zm0 0" filter="url(#wa-a)"/><path fill="#fff" d="m12.966 161.238 10.439-38.114a73.42 73.42 0 0 1-9.821-36.772c.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954z"/><path fill="url(#wa-b)" d="M87.184 25.227c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.313-6.179 22.558 23.146-6.069 2.235 1.324c9.387 5.571 20.15 8.517 31.126 8.523h.023c33.707 0 61.14-27.426 61.153-61.135a60.75 60.75 0 0 0-17.895-43.251 60.75 60.75 0 0 0-43.235-17.928z"/><path fill="#fff" fill-rule="evenodd" d="M68.772 55.603c-1.378-3.061-2.828-3.123-4.137-3.176l-3.524-.043c-1.226 0-3.218.46-4.902 2.3s-6.435 6.287-6.435 15.332 6.588 17.785 7.506 19.013 12.718 20.381 31.405 27.75c15.529 6.124 18.689 4.906 22.061 4.6s10.877-4.447 12.408-8.74 1.532-7.971 1.073-8.74-1.685-1.226-3.525-2.146-10.877-5.367-12.562-5.981-2.91-.919-4.137.921-4.746 5.979-5.819 7.206-2.144 1.381-3.984.462-7.76-2.861-14.784-9.124c-5.465-4.873-9.154-10.891-10.228-12.73s-.114-2.835.808-3.751c.825-.824 1.838-2.147 2.759-3.22s1.224-1.84 1.836-3.065.307-2.301-.153-3.22-4.032-10.011-5.666-13.647"/></svg>
+      Ficou com dúvida? Fala com a gente
+    </a>
+  </div>
+
+  <!-- Barra inferior (linha marfim + copyright) -->
+  <div class="footer-bar">
+    <span class="footer-copy"><strong class="footer-copy-highlight">© 2026 derm.ia.</strong> Todos os direitos reservados.</span>
+  </div>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  /* ── Orelha + forma do footer via JS ── */
+  (function() {
+    var EAR_TW = 140, EAR_BW = 200, EAR_H = 30, EAR_R = 12, JR = 18, RADIUS = 18;
+    var SVG_H  = 150 + EAR_H;
+
+    function buildPath(W) {
+      var cx = W/2, bL = cx-EAR_BW/2, bR = cx+EAR_BW/2;
+      var tL = cx-EAR_TW/2, tR = cx+EAR_TW/2, eY = EAR_H;
+      return ['M',RADIUS,eY,'Q',0,eY,0,eY+RADIUS,'L',0,SVG_H,'L',W,SVG_H,
+        'L',W,eY+RADIUS,'Q',W,eY,W-RADIUS,eY,
+        'L',bR+JR,eY,'Q',bR,eY,bR-JR,eY-JR,
+        'L',tR+EAR_R,EAR_R,'Q',tR,0,tR-EAR_R,0,
+        'L',tL+EAR_R,0,'Q',tL,0,tL-EAR_R,EAR_R,
+        'L',bL+JR,eY-JR,'Q',bL,eY,bL-JR,eY,'Z'].join(' ');
+    }
+
+    function buildGloss(W) {
+      var cx = W/2, bL = cx-EAR_BW/2, bR = cx+EAR_BW/2;
+      var tL = cx-EAR_TW/2, tR = cx+EAR_TW/2, eY = EAR_H;
+      return ['M',RADIUS,eY,'Q',0,eY,0,eY+RADIUS,
+        'L',0,eY+RADIUS+50,'Q',W*0.5,eY+RADIUS+25,W,eY+RADIUS+50,
+        'L',W,eY+RADIUS,'Q',W,eY,W-RADIUS,eY,
+        'L',bR+JR,eY,'Q',bR,eY,bR-JR,eY-JR,
+        'L',tR+EAR_R,EAR_R,'Q',tR,0,tR-EAR_R,0,
+        'L',tL+EAR_R,0,'Q',tL,0,tL-EAR_R,EAR_R,
+        'L',bL+JR,eY-JR,'Q',bL,eY,bL-JR,eY,'Z'].join(' ');
+    }
+
+    function update() {
+      var footer = document.getElementById('site-footer');
+      var svg    = document.getElementById('footer-shape');
+      var W      = footer.offsetWidth;
+      svg.setAttribute('viewBox','0 0 '+W+' '+SVG_H);
+      svg.setAttribute('width',W);
+      svg.setAttribute('height',SVG_H);
+      document.getElementById('footer-path-fill').setAttribute('d', buildPath(W));
+      document.getElementById('footer-path-gloss').setAttribute('d', buildGloss(W));
+
+      /* Atualiza máscara do blur */
+      var bl  = document.getElementById('footer-blur-layer');
+      if (bl) {
+        var enc = encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="'+W+'" height="'+SVG_H+'"><path d="'+buildPath(W)+'" fill="black"/></svg>');
+        var mu  = 'url("data:image/svg+xml,'+enc+'")';
+        bl.style.webkitMaskImage = mu; bl.style.maskImage = mu;
+        bl.style.webkitMaskSize  = '100% 100%'; bl.style.maskSize = '100% 100%';
+      }
+    }
+
+    if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', update);
+    else update();
+    window.addEventListener('resize', update);
+  })();
+
+  /* ── Canvas cover: desativado (footer fixo no layout) ── */
+  window.addEventListener('load', function() {
+    var ft = document.getElementById('site-footer');
+    if (ft) ft.classList.add('footer-ready');
+  });
+
+  /* ── Garante footer sempre na 2ª dobra; oculta nas inter screens ── */
+  (function() {
+    var BASE_PB_DESKTOP = 120;
+    var BASE_PB_MOBILE  = 120;
+
+    function isInter(screenId) {
+      return (screenId === 'screen-inter1' || screenId === 'screen-inter2' || screenId === 'screen-inter3');
+    }
+
+    function onScreenChange(activeScreen) {
+      var ft = document.getElementById('site-footer');
+      if (!ft) return;
+      // Footer permanece visível — cc-overlay (z-index:54) já o cobre nas inter screens
+      if (activeScreen && !isInter(activeScreen.id)) {
+        // Aguarda a animação de entrada terminar antes de medir
+        setTimeout(pushFooterToFold, 520);
+      }
+    }
+
+    function pushFooterToFold() {
+      var wrap = document.querySelector('.quiz-wrap');
+      var ft   = document.getElementById('site-footer');
+      if (!wrap || !ft || ft.style.display === 'none') return;
+
+      var isMobile = window.innerWidth <= 580;
+      var basePb   = isMobile ? BASE_PB_MOBILE : BASE_PB_DESKTOP;
+
+      // O min-height:100vh do .quiz-wrap já garante que o footer fique
+      // abaixo da dobra em screens com pouco conteúdo.
+      // Aqui só ajustamos o padding-bottom para o espaçamento correto.
+      wrap.style.paddingBottom = basePb + 'px';
+    }
+
+    // MutationObserver: detecta quando .active é adicionado a uma screen
+    var lastActive = null;
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (m.type === 'attributes' && m.attributeName === 'class') {
+          var el = m.target;
+          if (el.classList.contains('screen') && el.classList.contains('active')) {
+            if (el !== lastActive) {
+              lastActive = el;
+              onScreenChange(el);
+            }
+          }
+        }
+      });
+    });
+
+    function init() {
+      var wrap = document.querySelector('.quiz-wrap');
+      if (wrap) {
+        observer.observe(wrap, { attributes: true, subtree: true, attributeFilter: ['class'] });
+      }
+      // Também observa os inter boxes fora do quiz-wrap
+      ['inter1-box','inter2-box','inter3-box'].forEach(function(id) {
+        var box = document.getElementById('screen-inter1') || document.getElementById('screen-inter2') || document.getElementById('screen-inter3');
+      });
+      // Observa o body inteiro para pegar screen-inter* que ficam fora do quiz-wrap
+      observer.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class'] });
+      pushFooterToFold();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+    window.addEventListener('load', pushFooterToFold);
+    window.addEventListener('resize', pushFooterToFold);
+  })();
+
+  </script>
 </footer>
 
 <script>
@@ -2572,6 +2865,7 @@
   border: 1px solid rgba(255,255,255,0.60);
   box-shadow: 0 2px 8px rgba(24,16,14,0.07), inset 0 1px 0 rgba(255,255,255,0.8);
   cursor: pointer; text-decoration: none;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
 ">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 175.216 175.552" width="26" height="26"><defs><linearGradient id="b" x1="85.915" x2="86.535" y1="32.567" y2="137.092" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#57d163"/><stop offset="1" stop-color="#23b33a"/></linearGradient><filter id="a" width="1.115" height="1.114" x="-.057" y="-.057" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="3.531"/></filter></defs><path fill="#b3b3b3" d="m54.532 138.45 2.235 1.324c9.387 5.571 20.15 8.518 31.126 8.523h.023c33.707 0 61.139-27.426 61.153-61.135.006-16.335-6.349-31.696-17.895-43.251A60.75 60.75 0 0 0 87.94 25.983c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.312-6.179 22.558zm-40.811 23.544L24.16 123.88c-6.438-11.154-9.825-23.808-9.821-36.772.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954zm0 0" filter="url(#a)"/><path fill="#fff" d="m12.966 161.238 10.439-38.114a73.42 73.42 0 0 1-9.821-36.772c.017-40.556 33.021-73.55 73.578-73.55 19.681.01 38.154 7.669 52.047 21.572s21.537 32.383 21.53 52.037c-.018 40.553-33.027 73.553-73.578 73.553h-.032c-12.313-.005-24.412-3.094-35.159-8.954z"/><path fill="url(#linearGradient1780)" d="M87.184 25.227c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.312-6.179 22.559 23.146-6.069 2.235 1.324c9.387 5.571 20.15 8.518 31.126 8.524h.023c33.707 0 61.14-27.426 61.153-61.135a60.75 60.75 0 0 0-17.895-43.251 60.75 60.75 0 0 0-43.235-17.929z"/><path fill="url(#b)" d="M87.184 25.227c-33.733 0-61.166 27.423-61.178 61.13a60.98 60.98 0 0 0 9.349 32.535l1.455 2.313-6.179 22.558 23.146-6.069 2.235 1.324c9.387 5.571 20.15 8.517 31.126 8.523h.023c33.707 0 61.14-27.426 61.153-61.135a60.75 60.75 0 0 0-17.895-43.251 60.75 60.75 0 0 0-43.235-17.928z"/><path fill="#fff" fill-rule="evenodd" d="M68.772 55.603c-1.378-3.061-2.828-3.123-4.137-3.176l-3.524-.043c-1.226 0-3.218.46-4.902 2.3s-6.435 6.287-6.435 15.332 6.588 17.785 7.506 19.013 12.718 20.381 31.405 27.75c15.529 6.124 18.689 4.906 22.061 4.6s10.877-4.447 12.408-8.74 1.532-7.971 1.073-8.74-1.685-1.226-3.525-2.146-10.877-5.367-12.562-5.981-2.91-.919-4.137.921-4.746 5.979-5.819 7.206-2.144 1.381-3.984.462-7.76-2.861-14.784-9.124c-5.465-4.873-9.154-10.891-10.228-12.73s-.114-2.835.808-3.751c.825-.824 1.838-2.147 2.759-3.22s1.224-1.84 1.836-3.065.307-2.301-.153-3.22-4.032-10.011-5.666-13.647"/></svg>
 </a>
@@ -2608,6 +2902,7 @@
   border: 1px solid rgba(255,255,255,0.60);
   box-shadow: 0 2px 8px rgba(24,16,14,0.07), inset 0 1px 0 rgba(255,255,255,0.8);
   cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
 ">
   <span id="sound-icon" style="font-size:16px;line-height:1;">🔇</span>
 </button>
