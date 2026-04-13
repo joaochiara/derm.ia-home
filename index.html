@@ -33,7 +33,7 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html {
     scroll-behavior: smooth;
-    background: var(--ivory-dark);
+    background: var(--ivory);
   }
 
   /* Faixa lateral colorida — apenas na altura do hero, no ultrawide */
@@ -47,7 +47,7 @@
 
   body {
     font-family: var(--sans);
-    background: var(--ivory-dark);
+    background: var(--ivory);
     color: var(--ink);
     font-size: 16px;
     line-height: 1.6;
@@ -208,14 +208,23 @@
   }
   .nav-cta:hover { background: var(--wine-dark) !important; transform: scale(1.05) !important; }
 
-  /* ── MIST CANVAS ── */
-  #mist-canvas {
+  /* ── HERO CANVAS CLIP — wrapper fixed que corta os canvas na borda do hero ── */
+  #hero-canvas-clip {
     position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; right: 0;
+    overflow: hidden;
     pointer-events: none;
     z-index: 2;
+  }
+
+  /* ── MIST CANVAS ── */
+  #mist-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
     display: block;
   }
 
@@ -792,7 +801,7 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255,255,255,0.55);
-    border-radius: 22px;
+    border-radius: 16px;
     padding: 28px 28px 36px;
     position: relative;
     overflow: hidden;
@@ -1313,16 +1322,25 @@
       min-height: 100vh;
       background: transparent;
     }
-    .hero-eyebrow { font-size: 11px; margin-bottom: 16px; }
-    .hero h1 { font-size: 34px; margin-bottom: 18px; }
-    .hero-sub { font-size: 15px; margin-bottom: 16px; max-width: 100%; }
+    .hero-eyebrow { font-size: 11px; margin-bottom: 16px; position: relative; top: -110px; }
+    #hero-video { height: 36vh; position: absolute; bottom: auto; top: 345px; }
+    .hero h1 { font-size: 34px; margin-bottom: 18px; position: relative; top: -113px; }
+    .hero-badge { position: relative; top: -113px; font-size: 10px; }
+    .hero-sub { font-size: 12px; margin-bottom: 16px; max-width: 100%; position: relative; top: -113px; }
     .hero-actions {
       flex-direction: column;
       align-items: flex-start;
       gap: 14px;
+      position: relative;
+      top: 164px;
     }
-    .btn-primary { width: 100%; text-align: center; padding: 16px 24px; font-size: 15px; }
-    .hero-trust { margin-top: 32px; flex-wrap: wrap; gap: 10px; }
+    .btn-primary { width: 100%; text-align: center; justify-content: center; padding: 16px 24px; font-size: 15px; }
+    .hero-content .btn-primary {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: background 0.22s, box-shadow 0.22s, transform 0.15s !important;
+    }
+    .hero-trust { margin-top: 32px; flex-wrap: wrap; gap: 10px; position: relative; top: 145px; }
     .trust-text { font-size: 12px; }
 
     /* LOGOS STRIP */
@@ -1599,7 +1617,13 @@
 <div id="lp-progress-wrap">
   <div id="lp-progress-fill"></div>
 </div>
-<canvas id="mist-canvas"></canvas>
+<div id="hero-canvas-clip">
+  <canvas id="mist-canvas"></canvas>
+  <canvas id="particles-canvas" style="
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 1; opacity: 0.75;
+  "></canvas>
+</div>
 <div id="hero-side-bg"></div>
 <div id="how-side-bg"   style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;"></div>
 <div id="powers-side-bg" style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;"></div>
@@ -1639,10 +1663,6 @@
 
 <!-- HERO -->
 <section class="hero">
-  <canvas id="particles-canvas" style="
-    position: fixed; inset: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 1; opacity: 0.75;
-  "></canvas>
   <video id="hero-video" autoplay muted playsinline>
     <source src="videos/Hero_opt.mp4" type="video/mp4">
   </video>
@@ -1983,55 +2003,12 @@
       mistVideo.addEventListener('ended', () => { videoEnded = true; });
     }
 
-    function updateClip() {
-      const hero = document.querySelector('.hero');
-      if (!hero) return;
-      const r = hero.getBoundingClientRect();
-      const top    = Math.max(0, r.top);
-      const bottom = Math.min(window.innerHeight, r.bottom);
-
-      const heroH   = hero.offsetHeight;
-      const scrolled = Math.max(0, -r.top);
-      const progress = Math.min(1, scrolled / heroH); // 0..1
-
-      // Efeito 1: névoa sempre some com scroll
-      canvas.style.opacity = String(1 - progress);
-
-      // Efeito 2: vídeo regride — só após reprodução completa
-      if (videoEnded && mistVideo && mistVideo.readyState >= 2) {
-        const vidEnd   = mistVideo.duration || 6;
-        const vidStart = 0;  // regressa até o início
-        const target   = vidEnd - progress * (vidEnd - vidStart);
-        if (Math.abs(mistVideo.currentTime - target) > 0.05) {
-          mistVideo.currentTime = target;
-        }
-      }
-
-      // ClipPath
-      if (bottom <= top) {
-        canvas.style.clipPath = 'polygon(0 0,0 0,0 0)';
-      } else {
-        canvas.style.clipPath =
-          `polygon(0px ${top}px, 100% ${top}px, 100% ${bottom}px, 0px ${bottom}px)`;
-      }
+    function resize() {
+      W = canvas.width  = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+      applyDimensions();
     }
-
-    // Pausa/retoma vídeo no scroll — só após reprodução completa
-    let videoWasPlaying = false;
-    window.addEventListener('scroll', () => {
-      if (!mistVideo || !videoEnded) return;
-      const hero = document.querySelector('.hero');
-      if (!hero) return;
-      const scrolled = Math.max(0, -hero.getBoundingClientRect().top);
-      if (scrolled > 0) {
-        if (!mistVideo.paused) { videoWasPlaying = true; mistVideo.pause(); }
-      } else {
-        if (videoWasPlaying) { videoWasPlaying = false; mistVideo.play(); }
-      }
-    }, { passive: true });
-
-    window.addEventListener('scroll', updateClip, { passive: true });
-    window.addEventListener('resize', updateClip, { passive: true });
+    window.addEventListener('resize', resize);
 
     function sh(n) {
       const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
@@ -2104,18 +2081,32 @@
         b.ry = b.ryN * H;
       }
     }
+
+    const clipWrapper = document.getElementById('hero-canvas-clip');
+
+    // Atualiza a height do wrapper para a borda inferior do hero —
+    // o overflow:hidden do wrapper faz o corte sem nenhum JS de clip no canvas.
+    function updateWrapperHeight() {
+      const hero = document.querySelector('.hero');
+      if (!hero || !clipWrapper) return;
+      const bottom = hero.getBoundingClientRect().bottom;
+      clipWrapper.style.height = Math.max(0, bottom) + 'px';
+    }
+    window.addEventListener('scroll', updateWrapperHeight, { passive: true });
+    window.addEventListener('resize', updateWrapperHeight, { passive: true });
+    updateWrapperHeight();
+
     function resize() {
       W = canvas.width  = window.innerWidth;
       H = canvas.height = window.innerHeight;
       applyDimensions();
-      updateClip();
+      updateWrapperHeight();
     }
     window.addEventListener('resize', resize);
     W = canvas.width  = window.innerWidth;
     H = canvas.height = window.innerHeight;
     generateBlobs();
     applyDimensions();
-    requestAnimationFrame(updateClip);
 
     let last = 0;
     function draw(ts) {
@@ -2233,7 +2224,6 @@
       ctx.fillRect(0, 0, W, H * 0.30);
 
       ctx.restore();
-      updateClip();
       requestAnimationFrame(draw);
     }
     requestAnimationFrame(draw);
@@ -2509,22 +2499,10 @@
       }
       requestAnimationFrame(draw);
     }
-    // Clipa partículas à área do hero (canvas é fixed, mesma lógica da névoa)
-    function syncClip() {
-      const hero = document.querySelector('.hero');
-      if (!hero) return;
-      const r = hero.getBoundingClientRect();
-      const top    = Math.max(0, r.top);
-      const bottom = Math.min(window.innerHeight, r.bottom);
-      canvas.style.clipPath = bottom <= top
-        ? 'polygon(0 0,0 0,0 0)'
-        : `polygon(0px ${top}px,100% ${top}px,100% ${bottom}px,0px ${bottom}px)`;
-    }
-    window.addEventListener('scroll', syncClip, { passive: true });
-    window.addEventListener('resize', () => { resize(); particles = Array.from({length:particleCount()},(_,i)=>makeParticle(i)); syncClip(); });
+    window.addEventListener('resize', () => { resize(); particles = Array.from({length:particleCount()},(_,i)=>makeParticle(i)); });
     document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
     document.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
-    init(); syncClip(); requestAnimationFrame(draw);
+    init(); requestAnimationFrame(draw);
   })();
   </script>
 </div><!-- /#page-cap -->
@@ -2971,8 +2949,8 @@
 
     /* ── Config ── */
     const SPACING    = 20;
-    const BASE_R     = 1.05;
-    const WAVE_R     = 2.125;
+    const BASE_R     = 0.4;
+    const WAVE_R     = 1.2;
     const BASE_ALPHA = 0.18;
     const WAVE_ALPHA = 0.75;
     const FADE_ZONE  = 0.18;
