@@ -1335,10 +1335,10 @@
     #hero-video {
       position: absolute;
       bottom: 120px;
-      right: -15px;
+      right: -28px;
       left: auto;
       top: auto;
-      height: 70vw;
+      height: 80vw;
       width: auto;
     }
     .hero h1 { font-size: 34px; margin-bottom: 18px; }
@@ -1359,7 +1359,7 @@
     .trust-text { font-size: 12px; max-width: 100px; }
 
     /* LOGOS STRIP */
-    .logos-strip { padding: 16px 20px; }
+    .logos-strip { padding: 16px 20px; margin-top: -122px; }
     .logos-label { display: none; }
 
     /* HOW IT WORKS */
@@ -2197,36 +2197,38 @@
         ctx.restore();
       });
 
-      // ── Máscara de exclusão do rosto — apaga névoa sobre a região do rosto ──
-      // ATENÇÃO: canvas tem scaleY(-1), então Y na tela = H - Y_canvas
-      // Para posicionar visualmente: fx_visual e fy_visual são coords na TELA
-      // fy_canvas = H - fy_visual
-      ;(function() {
-        const fx_visual = 0.68 * W - 210;   // posição X na tela (da esquerda) — deslocado 210px à esquerda
-        const fy_visual = 0.42 * H + 120;   // posição Y na tela (do topo) — deslocado 120px para baixo
-        const fx  = fx_visual;
-        const fy  = H - fy_visual;    // converte para coordenada do canvas invertido
-        const frX = 0.20 * W;         // raio horizontal
-        const frY = 0.44 * H;         // raio vertical
-        const frr = Math.max(frX, frY);
-        const fg  = ctx.createRadialGradient(fx, fy, 0, fx, fy, frr);
-        fg.addColorStop(0,    'rgba(0,0,0,0.80)');
-        fg.addColorStop(0.25, 'rgba(0,0,0,0.60)');
-        fg.addColorStop(0.50, 'rgba(0,0,0,0.35)');
-        fg.addColorStop(0.70, 'rgba(0,0,0,0.15)');
-        fg.addColorStop(0.87, 'rgba(0,0,0,0.05)');
-        fg.addColorStop(1,    'rgba(0,0,0,0)');
-        ctx.save();
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.translate(fx, fy);
-        ctx.scale(frX / frr, frY / frr);
-        ctx.translate(-fx, -fy);
-        ctx.fillStyle = fg;
-        ctx.beginPath();
-        ctx.arc(fx, fy, frr, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      })();
+      // ── Máscara de exclusão do rosto — apaga névoa sobre a região do rosto (apenas desktop) ──
+      if (window.innerWidth > 480) {
+        // ATENÇÃO: canvas tem scaleY(-1), então Y na tela = H - Y_canvas
+        // Para posicionar visualmente: fx_visual e fy_visual são coords na TELA
+        // fy_canvas = H - fy_visual
+        ;(function() {
+          const fx_visual = 0.68 * W - 210;   // posição X na tela (da esquerda) — deslocado 210px à esquerda
+          const fy_visual = 0.42 * H + 120;   // posição Y na tela (do topo) — deslocado 120px para baixo
+          const fx  = fx_visual;
+          const fy  = H - fy_visual;    // converte para coordenada do canvas invertido
+          const frX = 0.20 * W;         // raio horizontal
+          const frY = 0.44 * H;         // raio vertical
+          const frr = Math.max(frX, frY);
+          const fg  = ctx.createRadialGradient(fx, fy, 0, fx, fy, frr);
+          fg.addColorStop(0,    'rgba(0,0,0,0.80)');
+          fg.addColorStop(0.25, 'rgba(0,0,0,0.60)');
+          fg.addColorStop(0.50, 'rgba(0,0,0,0.35)');
+          fg.addColorStop(0.70, 'rgba(0,0,0,0.15)');
+          fg.addColorStop(0.87, 'rgba(0,0,0,0.05)');
+          fg.addColorStop(1,    'rgba(0,0,0,0)');
+          ctx.save();
+          ctx.globalCompositeOperation = 'destination-out';
+          ctx.translate(fx, fy);
+          ctx.scale(frX / frr, frY / frr);
+          ctx.translate(-fx, -fy);
+          ctx.fillStyle = fg;
+          ctx.beginPath();
+          ctx.arc(fx, fy, frr, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        })();
+      }
 
       /* Máscara marfim suave — só cobre o topo (área do header) */
       const mask = ctx.createLinearGradient(0, 0, 0, H * 0.30);
@@ -2460,6 +2462,8 @@
     }
     function init(){ resize(); particles = Array.from({length:particleCount()},(_,i)=>makeParticle(i)); }
     function faceMaskAlpha(px, py) {
+      /* Apenas desktop — no mobile não há máscara de exclusão do rosto */
+      if (window.innerWidth <= 480) return 1.0;
       /* Mesma posição da máscara da névoa — elipse centrada na região do rosto */
       const fx = 0.68 * W - 210;
       const fy = 0.42 * H + 120;
