@@ -208,10 +208,10 @@
   }
   .nav-cta:hover { background: var(--wine-dark) !important; transform: scale(1.05) !important; }
 
-  /* ── HERO CANVAS CLIP — wrapper fixed que corta os canvas na borda do hero ── */
+  /* ── HERO CANVAS CLIP — dentro do hero, acompanha o scroll ── */
   #hero-canvas-clip {
-    position: fixed;
-    top: 0; left: 0; right: 0;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
     overflow: hidden;
     pointer-events: none;
     z-index: 2;
@@ -221,8 +221,8 @@
   #mist-canvas {
     position: absolute;
     top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
     z-index: 1;
     display: block;
@@ -693,6 +693,7 @@
     pointer-events: none;
     z-index: 5;
   }
+  /* Bloqueador atrás da pílula — só ativo no mobile */
   .logos-track {
     display: flex; align-items: center; gap: 48px;
     animation: marquee 40s linear infinite;
@@ -1324,6 +1325,22 @@
     }
     .nav-logo { font-size: 20px; }
 
+    /* Logos wrapper — background sólido para cobrir canvas fixos */
+    .logos-wrapper {
+      background-color: var(--ivory);
+    }
+    /* Extensão abaixo da logos-strip para cobrir gap até a .how */
+    .logos-wrapper::after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0; right: 0;
+      top: 100%;
+      height: 200px;
+      background: var(--ivory);
+      z-index: 3;
+    }
+
     /* HERO */
     .hero {
       min-height: 100vh;
@@ -1351,6 +1368,10 @@
       width: auto;
     }
     .hero h1 { font-size: 34px; margin-bottom: 18px; }
+    .how .section-h2 { font-size: 34px; }
+    .how-header { padding: 0 35px; }
+    .how-sub { font-size: 12px; margin-top: calc(-40px + 20px); max-width: 85%; white-space: normal; }
+    .step-cell:nth-child(2) { margin-top: 15px; }
     .hero-badge { font-size: 10px; }
     .hero-sub { font-size: 12px; margin-bottom: 16px; max-width: 100%; }
     .hero-actions {
@@ -1363,15 +1384,35 @@
     .trust-text { font-size: 12px; max-width: 100px; }
 
     /* LOGOS STRIP */
-    .logos-strip { padding: 16px 20px; margin-top: -122px; }
-    .logos-label { display: none; }
+    .logos-strip { padding: 16px 0; margin-top: -122px; }
+    .logos-label {
+      display: inline-flex; margin-left: 12px; font-size: 10px; padding: 6px 15px;
+      position: relative; z-index: 6;
+    }
+    .logos-fade-mask {
+      left: 0;
+      width: 239px; /* 209px sólido + 30px de fade */
+      background: linear-gradient(to right,
+        rgba(247,242,234,0.98) 0%,
+        rgba(247,242,234,0.98) 209px,
+        rgba(247,242,234,0) 100%
+      );
+    }
+    .logos-right-fade {
+      width: 30px;
+      background: linear-gradient(to right, rgba(247,242,234,0) 0%, rgba(247,242,234,0.98) 100%);
+    }
 
     /* HOW IT WORKS */
     .how {
-      padding: 60px 20px;
+      padding: 40px 20px;
+      background-color: var(--ivory);
+      margin-top: 0;
     }
     .section-h2 { font-size: 28px; margin-bottom: 36px; }
     .steps { gap: 8px; }
+    .step-cell:first-child { margin-top: -15px; }
+    .step-cell:nth-child(3) { margin-top: 15px; }
     .step { padding: 30px 24px; }
     .step-num { font-size: 40px; margin-bottom: 14px; }
     .step-icon { width: 40px; height: 40px; font-size: 18px; margin-bottom: 14px; }
@@ -1636,13 +1677,6 @@
 <div id="lp-progress-wrap">
   <div id="lp-progress-fill"></div>
 </div>
-<div id="hero-canvas-clip">
-  <canvas id="mist-canvas"></canvas>
-  <canvas id="particles-canvas" style="
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
-    pointer-events: none; z-index: 1; opacity: 0.75;
-  "></canvas>
-</div>
 <div id="hero-side-bg"></div>
 <div id="how-side-bg"   style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;"></div>
 <div id="powers-side-bg" style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;"></div>
@@ -1682,6 +1716,13 @@
 
 <!-- HERO -->
 <section class="hero">
+  <div id="hero-canvas-clip">
+    <canvas id="mist-canvas"></canvas>
+    <canvas id="particles-canvas" style="
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1; opacity: 0.75;
+    "></canvas>
+  </div>
   <video id="hero-video" autoplay muted playsinline webkit-playsinline preload="auto" src="videos/Hero_opt.mp4" type="video/mp4" x-webkit-airplay="deny" disableremoteplayback></video>
   <!-- hero-spotlight removido (canhão migrou para .how) -->
   <div id="hero-spotlight" style="display:none;"></div>
@@ -1711,7 +1752,7 @@
 </section>
 
 <!-- LOGOS -->
-<div style="position:relative; z-index:4;">
+<div class="logos-wrapper" style="position:relative; z-index:4;">
   <div class="logos-strip">
   <span class="logos-label">Sem vínculo com marcas</span>
   <div class="logos-scroll-area">
@@ -1737,7 +1778,7 @@
   <p class="section-eyebrow" id="how-eyebrow">Como funciona</p>
   <!-- Item 5: h2 com mesmo tamanho e typewriter do hero -->
   <h2 class="section-h2" id="how-h2" style="position:relative;">
-    <span id="how-h2-placeholder" style="visibility:hidden; display:block;">Em três passos, sua pele<br><em>finalmente decifrada</em>.</span>
+    <span id="how-h2-placeholder" style="visibility:hidden; display:block;">Em três passos, sua pele <em>finalmente decifrada</em>.</span>
     <span id="how-h2-typed-wrap" style="position:absolute; top:0; left:0; width:100%; visibility:hidden;"><span id="how-h2-typed"></span><span class="tw-cursor" id="how-tw-cursor" style="display:none;">|</span></span>
   </h2>
   <p class="how-sub" id="how-sub">Você não tem uma pele com problemas. <strong>Só não sabe que cosmético usar.</strong></p>
@@ -2101,27 +2142,14 @@
 
     const clipWrapper = document.getElementById('hero-canvas-clip');
 
-    // Atualiza a height do wrapper para a borda inferior do hero —
-    // o overflow:hidden do wrapper faz o corte sem nenhum JS de clip no canvas.
-    function updateWrapperHeight() {
-      const hero = document.querySelector('.hero');
-      if (!hero || !clipWrapper) return;
-      const bottom = hero.getBoundingClientRect().bottom;
-      clipWrapper.style.height = Math.max(0, bottom) + 'px';
-    }
-    window.addEventListener('scroll', updateWrapperHeight, { passive: true });
-    window.addEventListener('resize', updateWrapperHeight, { passive: true });
-    updateWrapperHeight();
-
     function resize() {
-      W = canvas.width  = window.innerWidth;
-      H = canvas.height = window.innerHeight;
+      const hero = document.querySelector('.hero');
+      W = canvas.width  = hero ? hero.offsetWidth  : window.innerWidth;
+      H = canvas.height = hero ? hero.offsetHeight : window.innerHeight;
       applyDimensions();
-      updateWrapperHeight();
     }
     window.addEventListener('resize', resize);
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+    resize();
     generateBlobs();
     applyDimensions();
 
@@ -2454,8 +2482,9 @@
     let mx = -9999, my = -9999;
     function particleCount() { return Math.round((W * H) / DENSITY); }
     function resize() {
-      W = canvas.width  = window.innerWidth;
-      H = canvas.height = window.innerHeight;
+      const hero = document.querySelector('.hero');
+      W = canvas.width  = hero ? hero.offsetWidth  : window.innerWidth;
+      H = canvas.height = hero ? hero.offsetHeight : window.innerHeight;
     }
     function rand(a,b){ return a + Math.random()*(b-a); }
     function makeParticle(i){
@@ -3099,7 +3128,7 @@
     const cursor   = document.getElementById('how-tw-cursor');
     const CHAR_MS  = 38;
     const tokens   = [
-      { text: 'Em três passos, sua pele\n', em: false },
+      { text: 'Em três passos, sua pele ', em: false },
       { text: 'finalmente decifrada', em: true },
       { text: '.', em: false },
     ];
@@ -3167,7 +3196,7 @@
           setTimeout(startTypewriter, 120);
         }
       });
-    }, { threshold: 0.40 });
+    }, { threshold: window.innerWidth <= 480 ? 0.20 : 0.30 });
     observer.observe(section);
 
     /* ── Item 7: float orgânico dos boxes + dots ── */
