@@ -1266,6 +1266,14 @@
   #whatsapp-btn:hover { transform: scale(1.06) !important; }
   #sound-toggle:hover { transform: scale(1.06) !important; }
 
+  /* ── Remove botão de play nativo em todos os vídeos ── */
+  video::-webkit-media-controls { display: none !important; }
+  video::-webkit-media-controls-enclosure { display: none !important; }
+  video::-webkit-media-controls-panel { display: none !important; }
+  video::-webkit-media-controls-play-button { display: none !important; }
+  video::-webkit-media-controls-start-playback-button { display: none !important; }
+  video { -webkit-appearance: none; }
+
   /* ── WIDESCREEN (901px–1470px) — aproxima conteúdo do centro ── */
   @media (min-width: 901px) and (max-width: 1470px) {
     #hero-video {
@@ -1349,7 +1357,7 @@
       align-items: flex-start;
       gap: 14px;
     }
-    .btn-primary { width: 100%; text-align: center; justify-content: center; padding: 16px 24px; font-size: 15px; }
+    .btn-primary { width: 100%; text-align: center; justify-content: center; padding: 16px 24px; font-size: 16px; }
     .hero-content .btn-primary {
       opacity: 1 !important;
       transform: none !important;
@@ -1429,7 +1437,7 @@
     }
     .cta-final h2 { font-size: 28px; }
     .cta-final p { font-size: 14px; margin-bottom: 28px; }
-    .cta-final .btn-primary { padding: 16px 28px; font-size: 15px; width: 100%; display: block; }
+    .cta-final .btn-primary { padding: 16px 28px; font-size: 16px; width: 100%; display: block; }
 
     /* SECTION EYEBROW */
     .section-eyebrow { font-size: 11px; }
@@ -1678,7 +1686,7 @@
 
 <!-- HERO -->
 <section class="hero">
-  <video id="hero-video" autoplay muted playsinline webkit-playsinline preload="auto" src="videos/Hero_opt.mp4" type="video/mp4"></video>
+  <video id="hero-video" autoplay muted playsinline webkit-playsinline preload="auto" src="videos/Hero_opt.mp4" type="video/mp4" x-webkit-airplay="deny" disableremoteplayback></video>
   <!-- hero-spotlight removido (canhão migrou para .how) -->
   <div id="hero-spotlight" style="display:none;"></div>
   <div class="hero-inner">
@@ -3372,20 +3380,22 @@
   })();
 </script>
 <script>
-  /* ── HERO VIDEO AUTOPLAY — força reprodução no Chrome mobile ── */
+  /* ── HERO VIDEO AUTOPLAY — sem loop, sem controles nativos ── */
   (function heroVideoAutoplay() {
     const video = document.getElementById('hero-video');
     if (!video) return;
 
-    video.muted = true;
+    video.muted    = true;
+    video.loop     = false;
+    video.controls = false;
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
+    video.setAttribute('disableremoteplayback', '');
 
     function tryPlay() {
       const p = video.play();
       if (p !== undefined) {
         p.catch(function() {
-          /* Fallback: aguarda qualquer toque ou scroll */
           function onInteract() {
             video.play().catch(function(){});
             document.removeEventListener('touchstart', onInteract);
@@ -3401,16 +3411,11 @@
       }
     }
 
-    /* Força re-load do src e depois tenta play — resolve o bug do Chrome mobile
-       onde <video src="..."> sem <source> não dispara canplay sozinho */
     video.load();
     video.addEventListener('canplaythrough', tryPlay, { once: true });
     video.addEventListener('canplay',        tryPlay, { once: true });
-
-    /* Segurança: tenta também após 300ms, caso os eventos já tenham disparado */
     setTimeout(tryPlay, 300);
 
-    /* Retoma ao voltar para a aba ou ao vídeo entrar na viewport */
     document.addEventListener('visibilitychange', function() {
       if (!document.hidden && video.paused) tryPlay();
     });
@@ -3420,6 +3425,31 @@
         if (entries[0].isIntersecting && video.paused) tryPlay();
       }, { threshold: 0.1 }).observe(video);
     }
+  })();
+
+  /* ── STEP VIDEOS AUTOPLAY — loop infinito, sem controles nativos ── */
+  (function stepVideosAutoplay() {
+    document.querySelectorAll('.step-video-box video').forEach(function(video) {
+      video.muted    = true;
+      video.loop     = true;
+      video.controls = false;
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
+
+      function tryPlay() { video.play().catch(function(){}); }
+
+      if (video.readyState >= 2) {
+        tryPlay();
+      } else {
+        video.addEventListener('canplay', tryPlay, { once: true });
+      }
+
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function(entries) {
+          if (entries[0].isIntersecting && video.paused) tryPlay();
+        }, { threshold: 0.1 }).observe(video);
+      }
+    });
   })();
 </script>
 <script>
