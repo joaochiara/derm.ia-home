@@ -1324,17 +1324,16 @@
       min-height: 100dvh;
       background: transparent;
     }
-    .hero-eyebrow { font-size: 11px; margin-bottom: 16px; position: relative; top: -60px; }
+    .hero-eyebrow { font-size: 11px; margin-bottom: 16px; position: relative; }
     #hero-video { height: 36vh; position: absolute; bottom: auto; top: 345px; }
-    .hero h1 { font-size: 34px; margin-bottom: 18px; position: relative; top: -63px; }
-    .hero-badge { position: relative; top: -63px; font-size: 10px; }
-    .hero-sub { font-size: 12px; margin-bottom: 16px; max-width: 100%; position: relative; top: -63px; }
+    .hero h1 { font-size: 34px; margin-bottom: 18px; position: relative; }
+    .hero-badge { position: relative; font-size: 10px; }
+    .hero-sub { font-size: 12px; margin-bottom: 16px; max-width: 100%; position: relative; }
     .hero-actions {
       flex-direction: column;
       align-items: flex-start;
       gap: 14px;
       position: relative;
-      top: 164px;
     }
     .btn-primary { width: 100%; text-align: center; justify-content: center; padding: 16px 24px; font-size: 15px; }
     .hero-content .btn-primary {
@@ -1342,7 +1341,7 @@
       transform: none !important;
       transition: background 0.22s, box-shadow 0.22s, transform 0.15s !important;
     }
-    .hero-trust { margin-top: 32px; flex-wrap: wrap; gap: 10px; position: relative; top: 145px; }
+    .hero-trust { margin-top: 32px; flex-wrap: wrap; gap: 10px; position: relative; }
     .trust-text { font-size: 12px; }
 
     /* LOGOS STRIP */
@@ -3407,20 +3406,48 @@
   })();
 </script>
 <script>
-  /* ── HERO HEIGHT FIX — usa window.innerHeight (igual ao quiz) para evitar
-     discrepância entre DevTools e iPhone real causada pela barra do browser ── */
-  (function heroHeightFix() {
-    function setHeroHeight() {
-      if (window.innerWidth > 480) return; // só mobile
+  /* ── HERO MOBILE FIX — usa window.innerHeight (igual ao quiz) para calcular
+     altura e offsets reais, evitando discrepância entre DevTools e iPhone real ── */
+  (function heroMobileFix() {
+    function apply() {
+      if (window.innerWidth > 480) return;
+
+      const vh = window.innerHeight;
+
+      // Seta altura mínima do hero com valor real
       const hero = document.querySelector('.hero');
-      if (!hero) return;
-      hero.style.minHeight = window.innerHeight + 'px';
+      if (hero) hero.style.minHeight = vh + 'px';
+
+      /* Referência: 812px (iPhone X/11 Pro) = viewport base dos valores originais.
+         Todos os offsets escalam proporcionalmente ao vh real. */
+      const BASE_VH = 812;
+      const ratio   = vh / BASE_VH;
+
+      // Offsets base (ajustados nas sessões anteriores)
+      const eyebrowTop  = Math.round(-40  * ratio);
+      const groupTop    = Math.round(-43  * ratio);
+      const actionsTop  = Math.round(164  * ratio);
+      const trustTop    = Math.round(145  * ratio);
+
+      const eyebrow = document.querySelector('.hero-eyebrow');
+      const h1      = document.querySelector('.hero h1');
+      const badge   = document.querySelector('.hero-badge');
+      const sub     = document.querySelector('.hero-sub');
+      const actions = document.querySelector('.hero-actions');
+      const trust   = document.querySelector('.hero-trust');
+
+      if (eyebrow) eyebrow.style.top = eyebrowTop + 'px';
+      if (h1)      h1.style.top      = groupTop   + 'px';
+      if (badge)   badge.style.top   = groupTop   + 'px';
+      if (sub)     sub.style.top     = groupTop   + 'px';
+      if (actions) actions.style.top = actionsTop + 'px';
+      if (trust)   trust.style.top   = trustTop   + 'px';
     }
-    setHeroHeight();
-    window.addEventListener('resize', setHeroHeight, { passive: true });
-    // Refaz após orientação mudar (iOS dispara resize com delay)
+
+    apply();
+    window.addEventListener('resize', apply, { passive: true });
     window.addEventListener('orientationchange', function() {
-      setTimeout(setHeroHeight, 200);
+      setTimeout(apply, 200);
     }, { passive: true });
   })();
 </script>
