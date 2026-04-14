@@ -1338,7 +1338,7 @@
       right: -15px;
       left: auto;
       top: auto;
-      height: 64vw;
+      height: 70vw;
       width: auto;
     }
     .hero h1 { font-size: 34px; margin-bottom: 18px; }
@@ -1356,7 +1356,7 @@
       transition: background 0.22s, box-shadow 0.22s, transform 0.15s !important;
     }
     .hero-trust { margin-top: 24px; flex-wrap: wrap; gap: 10px; }
-    .trust-text { font-size: 12px; }
+    .trust-text { font-size: 12px; max-width: 160px; }
 
     /* LOGOS STRIP */
     .logos-strip { padding: 16px 20px; }
@@ -3374,7 +3374,6 @@
     if (!video) return;
 
     video.muted = true;
-    video.loop  = true;
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
 
