@@ -1636,35 +1636,10 @@
 <div id="lp-progress-wrap">
   <div id="lp-progress-fill"></div>
 </div>
-<script>
-  /* ── HERO MOBILE FIX — roda ANTES dos canvas para que a altura do hero
-     esteja correta quando mist/particles calcularem suas dimensões ── */
-  (function heroMobileFix() {
-    function apply() {
-      if (window.innerWidth > 480) return;
-      const hero    = document.querySelector('.hero');
-      const content = document.querySelector('.hero-content');
-      const nav     = document.querySelector('#nav-sticky-helper nav') || document.querySelector('nav');
-      if (!hero || !content) return;
-      const navH = nav ? nav.getBoundingClientRect().height : 60;
-      content.style.paddingTop = (navH + 2) + 'px';
-      hero.style.minHeight = window.innerHeight + 'px';
-      /* Notifica os canvas para recalcularem altura */
-      window.dispatchEvent(new Event('resize'));
-    }
-    /* Roda imediatamente e também no DOMContentLoaded para pegar o nav */
-    apply();
-    document.addEventListener('DOMContentLoaded', apply);
-    window.addEventListener('resize', apply, { passive: true });
-    window.addEventListener('orientationchange', function() {
-      setTimeout(apply, 200);
-    }, { passive: true });
-  })();
-</script>
 <div id="hero-canvas-clip">
   <canvas id="mist-canvas"></canvas>
   <canvas id="particles-canvas" style="
-    position: absolute; top: 0; left: 0; width: 100vw; height: 100%;
+    position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
     pointer-events: none; z-index: 1; opacity: 0.75;
   "></canvas>
 </div>
@@ -2136,7 +2111,6 @@
     }
     window.addEventListener('scroll', updateWrapperHeight, { passive: true });
     window.addEventListener('resize', updateWrapperHeight, { passive: true });
-    document.addEventListener('DOMContentLoaded', updateWrapperHeight);
     updateWrapperHeight();
 
     function resize() {
@@ -3475,6 +3449,33 @@
         }, { threshold: 0.1 }).observe(video);
       }
     });
+  })();
+</script>
+<script>
+  /* ── HERO MOBILE FIX — padding-top baseado na altura real do header ── */
+  (function heroMobileFix() {
+    function apply() {
+      if (window.innerWidth > 480) return;
+
+      const hero    = document.querySelector('.hero');
+      const content = document.querySelector('.hero-content');
+      const nav     = document.querySelector('#nav-sticky-helper nav') || document.querySelector('nav');
+      if (!hero || !content) return;
+
+      const navH = nav ? nav.getBoundingClientRect().height : 60;
+      content.style.paddingTop = (navH + 2) + 'px';
+      hero.style.minHeight = window.innerHeight + 'px';
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', apply);
+    } else {
+      apply();
+    }
+    window.addEventListener('resize', apply, { passive: true });
+    window.addEventListener('orientationchange', function() {
+      setTimeout(apply, 200);
+    }, { passive: true });
   })();
 </script>
 </body>
