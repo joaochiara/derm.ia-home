@@ -308,6 +308,7 @@
   /* ── HERO ── */
   .hero {
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     position: relative;
@@ -1663,9 +1664,7 @@
 
 <!-- HERO -->
 <section class="hero">
-  <video id="hero-video" autoplay muted playsinline>
-    <source src="videos/Hero_opt.mp4" type="video/mp4">
-  </video>
+  <video id="hero-video" autoplay muted playsinline webkit-playsinline preload="auto" src="videos/Hero_opt.mp4" type="video/mp4"></video>
   <!-- hero-spotlight removido (canhão migrou para .how) -->
   <div id="hero-spotlight" style="display:none;"></div>
   <div class="hero-inner">
@@ -3360,9 +3359,8 @@
     const video = document.getElementById('hero-video');
     if (!video) return;
 
-    // Garante atributos necessários para autoplay mobile
-    video.muted    = true;
-    video.autoplay = true;
+    video.muted = true;
+    video.loop  = true;
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
 
@@ -3370,42 +3368,41 @@
       const p = video.play();
       if (p !== undefined) {
         p.catch(function() {
-          // Fallback: tenta após primeiro toque/scroll do usuário
-          const resume = function() {
+          /* Fallback: aguarda qualquer toque ou scroll */
+          function onInteract() {
             video.play().catch(function(){});
-            document.removeEventListener('touchstart', resume);
-            document.removeEventListener('touchend',   resume);
-            document.removeEventListener('scroll',     resume);
-          };
-          document.addEventListener('touchstart', resume, { once: true, passive: true });
-          document.addEventListener('touchend',   resume, { once: true, passive: true });
-          document.addEventListener('scroll',     resume, { once: true, passive: true });
+            document.removeEventListener('touchstart', onInteract);
+            document.removeEventListener('touchend',   onInteract);
+            document.removeEventListener('scroll',     onInteract);
+            document.removeEventListener('click',      onInteract);
+          }
+          document.addEventListener('touchstart', onInteract, { once: true, passive: true });
+          document.addEventListener('touchend',   onInteract, { once: true, passive: true });
+          document.addEventListener('scroll',     onInteract, { once: true, passive: true });
+          document.addEventListener('click',      onInteract, { once: true, passive: true });
         });
       }
     }
 
-    // Tenta imediatamente
-    if (video.readyState >= 2) {
-      tryPlay();
-    } else {
-      video.addEventListener('loadeddata', tryPlay, { once: true });
-      video.addEventListener('canplay',    tryPlay, { once: true });
-    }
+    /* Força re-load do src e depois tenta play — resolve o bug do Chrome mobile
+       onde <video src="..."> sem <source> não dispara canplay sozinho */
+    video.load();
+    video.addEventListener('canplaythrough', tryPlay, { once: true });
+    video.addEventListener('canplay',        tryPlay, { once: true });
 
-    // IntersectionObserver: retoma quando o vídeo entra na viewport (ex: ao voltar para a aba)
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          if (entry.isIntersecting && video.paused) tryPlay();
-        });
-      }, { threshold: 0.25 });
-      io.observe(video);
-    }
+    /* Segurança: tenta também após 300ms, caso os eventos já tenham disparado */
+    setTimeout(tryPlay, 300);
 
-    // Retoma se a aba voltar ao foco
+    /* Retoma ao voltar para a aba ou ao vídeo entrar na viewport */
     document.addEventListener('visibilitychange', function() {
       if (!document.hidden && video.paused) tryPlay();
     });
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(entries) {
+        if (entries[0].isIntersecting && video.paused) tryPlay();
+      }, { threshold: 0.1 }).observe(video);
+    }
   })();
 </script>
 </body>
