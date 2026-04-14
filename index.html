@@ -3354,5 +3354,59 @@
     update();
   })();
 </script>
+<script>
+  /* ── HERO VIDEO AUTOPLAY — força reprodução no Chrome mobile ── */
+  (function heroVideoAutoplay() {
+    const video = document.getElementById('hero-video');
+    if (!video) return;
+
+    // Garante atributos necessários para autoplay mobile
+    video.muted    = true;
+    video.autoplay = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+
+    function tryPlay() {
+      const p = video.play();
+      if (p !== undefined) {
+        p.catch(function() {
+          // Fallback: tenta após primeiro toque/scroll do usuário
+          const resume = function() {
+            video.play().catch(function(){});
+            document.removeEventListener('touchstart', resume);
+            document.removeEventListener('touchend',   resume);
+            document.removeEventListener('scroll',     resume);
+          };
+          document.addEventListener('touchstart', resume, { once: true, passive: true });
+          document.addEventListener('touchend',   resume, { once: true, passive: true });
+          document.addEventListener('scroll',     resume, { once: true, passive: true });
+        });
+      }
+    }
+
+    // Tenta imediatamente
+    if (video.readyState >= 2) {
+      tryPlay();
+    } else {
+      video.addEventListener('loadeddata', tryPlay, { once: true });
+      video.addEventListener('canplay',    tryPlay, { once: true });
+    }
+
+    // IntersectionObserver: retoma quando o vídeo entra na viewport (ex: ao voltar para a aba)
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting && video.paused) tryPlay();
+        });
+      }, { threshold: 0.25 });
+      io.observe(video);
+    }
+
+    // Retoma se a aba voltar ao foco
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden && video.paused) tryPlay();
+    });
+  })();
+</script>
 </body>
 </html>
