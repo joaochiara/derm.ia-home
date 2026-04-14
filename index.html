@@ -1344,7 +1344,7 @@
     #hero-video {
       position: absolute;
       bottom: 120px;
-      right: -28px;
+      right: -38px;
       left: auto;
       top: auto;
       height: 80vw;
@@ -1359,11 +1359,6 @@
       gap: 14px;
     }
     .btn-primary { width: 100%; text-align: center; justify-content: center; padding: 16px 24px; font-size: 16px; }
-    .hero-content .btn-primary {
-      opacity: 1 !important;
-      transform: none !important;
-      transition: background 0.22s, box-shadow 0.22s, transform 0.15s !important;
-    }
     .hero-trust { margin-top: 24px; flex-wrap: wrap; gap: 10px; flex-direction: column; align-items: flex-start; }
     .trust-text { font-size: 12px; max-width: 100px; }
 
@@ -2390,21 +2385,19 @@
           subEl.classList.add('sub-visible');
           const badge = document.querySelector('.hero-badge');
           if (badge) badge.classList.add('sub-visible');
+          // Botão entra sincronizado com o subtítulo
+          btnEl.classList.add('btn-visible');
+          setTimeout(() => { btnEl.classList.add('btn-ready'); }, 540);
         }
 
         if (charIndex >= totalChars) {
           clearInterval(interval);
           setTimeout(() => { if (cursor) cursor.style.display = 'none'; }, 600);
           setTimeout(() => {
-            btnEl.classList.add('btn-visible');
             document.querySelector('.btn-ghost').classList.add('sub-visible');
             const trust = document.querySelector('.hero-trust');
             if (trust) trust.classList.add('sub-visible');
-            // Holofote: começa a aparecer junto com o botão, 2s de fade
-            const spotlight = document.getElementById('hero-spotlight');
-            if (spotlight) spotlight.classList.add('spotlight-visible');
             if (window._spotlightShow) window._spotlightShow();
-            setTimeout(() => { btnEl.classList.add('btn-ready'); }, 540);
           }, 200);
         }
       }, CHAR_MS);
