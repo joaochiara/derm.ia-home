@@ -1321,6 +1321,7 @@
     }
     .hero {
       min-height: 100vh;
+      min-height: 100dvh;
       background: transparent;
     }
     .hero-eyebrow { font-size: 11px; margin-bottom: 16px; position: relative; top: -60px; }
@@ -3403,6 +3404,24 @@
         if (entries[0].isIntersecting && video.paused) tryPlay();
       }, { threshold: 0.1 }).observe(video);
     }
+  })();
+</script>
+<script>
+  /* ── HERO HEIGHT FIX — usa window.innerHeight (igual ao quiz) para evitar
+     discrepância entre DevTools e iPhone real causada pela barra do browser ── */
+  (function heroHeightFix() {
+    function setHeroHeight() {
+      if (window.innerWidth > 480) return; // só mobile
+      const hero = document.querySelector('.hero');
+      if (!hero) return;
+      hero.style.minHeight = window.innerHeight + 'px';
+    }
+    setHeroHeight();
+    window.addEventListener('resize', setHeroHeight, { passive: true });
+    // Refaz após orientação mudar (iOS dispara resize com delay)
+    window.addEventListener('orientationchange', function() {
+      setTimeout(setHeroHeight, 200);
+    }, { passive: true });
   })();
 </script>
 </body>
