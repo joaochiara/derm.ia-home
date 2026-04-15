@@ -43,17 +43,6 @@
     pointer-events: none;
     z-index: 0;
     background: #F7F2EA;
-    display: none; /* oculto por padrão — só ativo em ultrawide */
-  }
-
-  /* Side-bgs só existem para preencher laterais em telas > 1470px */
-  @media (min-width: 1471px) {
-    #hero-side-bg,
-    #how-side-bg,
-    #powers-side-bg,
-    #testi-side-bg {
-      display: block !important;
-    }
   }
 
   body {
@@ -1784,9 +1773,9 @@
   <div id="lp-progress-fill"></div>
 </div>
 <div id="hero-side-bg"></div>
-<div id="how-side-bg"   style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;display:none;"></div>
-<div id="powers-side-bg" style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;display:none;"></div>
-<div id="testi-side-bg" style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#18100E;display:none;"></div>
+<div id="how-side-bg"   style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;"></div>
+<div id="powers-side-bg" style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;"></div>
+<div id="testi-side-bg" style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#18100E;"></div>
 
 <!-- Hero canvas — fora do page-cap para cobrir 100vw em ultrawide -->
 <div id="hero-canvas-clip">
@@ -2398,14 +2387,6 @@
           ctx.restore();
         })();
       }
-
-      /* Máscara marfim suave — só cobre o topo (área do header) */
-      const mask = ctx.createLinearGradient(0, 0, 0, H * 0.30);
-      mask.addColorStop(0,    'rgba(247,242,234,0.92)');
-      mask.addColorStop(0.50, 'rgba(247,242,234,0.40)');
-      mask.addColorStop(1,    'rgba(247,242,234,0)');
-      ctx.fillStyle = mask;
-      ctx.fillRect(0, 0, W, H * 0.30);
 
       ctx.restore();
       requestAnimationFrame(draw);
