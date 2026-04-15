@@ -38,11 +38,22 @@
 
   /* Faixa lateral colorida — apenas na altura do hero, no ultrawide */
   #hero-side-bg {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    position: fixed;
+    top: 0; left: 0; right: 0;
     pointer-events: none;
     z-index: 0;
     background: #F7F2EA;
+    display: none; /* oculto por padrão — só ativo em ultrawide */
+  }
+
+  /* Side-bgs só existem para preencher laterais em telas > 1470px */
+  @media (min-width: 1471px) {
+    #hero-side-bg,
+    #how-side-bg,
+    #powers-side-bg,
+    #testi-side-bg {
+      display: block !important;
+    }
   }
 
   body {
@@ -1772,9 +1783,10 @@
 <div id="lp-progress-wrap">
   <div id="lp-progress-fill"></div>
 </div>
-<div id="how-side-bg"   style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;"></div>
-<div id="powers-side-bg" style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;"></div>
-<div id="testi-side-bg" style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#18100E;"></div>
+<div id="hero-side-bg"></div>
+<div id="how-side-bg"   style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;display:none;"></div>
+<div id="powers-side-bg" style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#F7F2EA;display:none;"></div>
+<div id="testi-side-bg" style="position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:0;background:#18100E;display:none;"></div>
 
 <!-- Hero canvas — fora do page-cap para cobrir 100vw em ultrawide -->
 <div id="hero-canvas-clip">
@@ -1819,7 +1831,6 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div id="hero-side-bg"></div>
   <video id="hero-video" autoplay muted playsinline webkit-playsinline preload="auto" src="videos/Hero_opt.mp4" type="video/mp4" x-webkit-airplay="deny" disableremoteplayback></video>
   <!-- hero-spotlight removido (canhão migrou para .how) -->
   <div id="hero-spotlight" style="display:none;"></div>
@@ -3126,7 +3137,20 @@
     window.addEventListener('resize', sync, { passive: true });
   })();
 
-  /* ── HERO SIDE BG — posicionado via CSS (absolute dentro do .hero) ── */
+  /* ── HERO SIDE BG — faixa lateral colorida apenas na altura do hero ── */
+  (function heroSideBg() {
+    const bg   = document.getElementById('hero-side-bg');
+    const hero = document.querySelector('.hero');
+    if (!bg || !hero) return;
+    function sync() {
+      const r = hero.getBoundingClientRect();
+      bg.style.top    = Math.max(0, r.top) + 'px';
+      bg.style.height = (r.top + r.height - Math.max(0, r.top)) + 'px';
+    }
+    sync();
+    window.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync, { passive: true });
+  })();
 </script>
 <script>
   /* ── DOT GRID — pontilhado em onda na seção How It Works ── */
