@@ -340,16 +340,7 @@
     transition: opacity 0.4s ease;
   }
 
-  /* Fade suave na borda inferior do hero */
-  .hero::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 160px;
-    background: linear-gradient(to bottom, transparent, var(--ivory));
-    pointer-events: none;
-    z-index: 0;
-  }
+  /* Fade inferior do hero removido */
 
   /* Conteúdo do hero — acima da névoa (fixed z:2) e cursor (fixed z:3) via z-index:10 no contexto raiz */
   .hero-content { position: relative; z-index: 10; max-width: 680px; padding: 140px 0 100px 75px; }
