@@ -768,11 +768,11 @@
        padding de 20px cada lado cria espaço interno sem overflow. */
     padding: 0 20px;
     margin-top: 5px;
+    overflow: visible;
   }
 
   .steps {
     display: grid; grid-template-columns: repeat(3,1fr); gap: 25px;
-    isolation: isolate;
   }
 
   /* Wrapper de cada step: dot à esquerda + box à direita */
@@ -1423,7 +1423,7 @@
     .how .section-h2 { font-size: 34px; }
     .how-header { padding: 0 25px 0 25px; }
     .how-sub { font-size: 12px; margin-top: calc(-40px + 20px); max-width: 85%; white-space: normal; }
-    .step-cell:nth-child(2) { margin-top: 15px; }
+    .step-cell:nth-child(2) { margin-top: 20px; }
     .hero-badge { font-size: 10px; }
     .hero-sub { font-size: 12px; margin-bottom: 16px; max-width: 100%; }
     .hero-actions {
@@ -1462,15 +1462,57 @@
       margin-top: 0;
     }
     .section-h2 { font-size: 28px; margin-bottom: 36px; }
-    .steps { gap: 8px; }
-    .steps-wrapper { padding: 0; }
-    .step-cell:first-child { margin-top: -15px; }
-    .step-cell:nth-child(3) { margin-top: 15px; }
+    .steps-wrapper {
+      padding: 0;
+      overflow: visible;
+    }
+    .step-cell:first-child { margin-top: 0; }
+    .step-cell:nth-child(2) { margin-top: 0; }
+    .step-cell:nth-child(3) { margin-top: 0; }
     .step { padding: 30px 24px; }
     .step-num { font-size: 40px; margin-bottom: 14px; }
     .step-icon { width: 40px; height: 40px; font-size: 18px; margin-bottom: 14px; }
     .step h3 { font-size: 19px; margin-bottom: 8px; }
     .step p { font-size: 14px; }
+
+    /* Dots acima do box no mobile */
+    .step-cell {
+      flex-direction: column;
+      align-items: flex-start;
+      width: 70%;
+      flex-shrink: 0;
+    }
+    .step-cell .step-dot-wrap {
+      flex-direction: row;
+      margin-right: 0;
+      margin-top: 0;
+      margin-bottom: 25px;
+      gap: 8px;
+    }
+    .step-emoji-dot {
+      margin-top: 0;
+    }
+
+    /* Carrossel mobile — .steps é o scroll container, com padding interno */
+    .steps {
+      display: flex;
+      flex-direction: row;
+      grid-template-columns: none;
+      align-items: flex-start;
+      overflow-x: scroll;
+      overflow-y: visible;
+      scroll-snap-type: x mandatory;
+      scroll-padding-left: 20px;
+      -webkit-overflow-scrolling: touch;
+      gap: 20px;
+      padding: 20px 20px 24px 20px;
+      margin: -35px -20px -24px -20px;
+      scrollbar-width: none;
+      box-sizing: content-box;
+    }
+    .steps::-webkit-scrollbar { display: none; }
+    .step-cell { scroll-snap-align: start; }
+    .step-cell:nth-child(2) { scroll-snap-align: center; }
 
     /* POWERS */
     .powers {
@@ -1676,7 +1718,7 @@
     position: relative;
     z-index: 5;
     background-color: transparent;
-    overflow: hidden; /* corta o canhão na borda superior, impedindo vazamento para a hero */
+    overflow: visible;
   }
   /* Conteúdo da .how fica acima do cursor glow (z:4)
      Ordem de baixo para cima: bg marfim → beam(z:0) → pontilhado(z:3) → cursor glow(z:4) → .how(z:5) → elementos */
@@ -1789,7 +1831,7 @@
         <span style="position:absolute; top:0; left:0; width:100%;"><span id="hero-title-typed"></span><span class="tw-cursor" id="hero-tw-cursor">|</span></span>
       </h1>
       <p class="hero-badge">Uma IA assistente virtual de skincare com 30 dias grátis</p>
-      <p class="hero-sub" id="hero-sub" style="margin-top: -10px;">Responda o questionário, passe pelo scanner e receba um<br>protocolo de cuidado com a pele personalizado para você.</p>
+      <p class="hero-sub" id="hero-sub" style="margin-top: -10px;">Preencha o prontuário, passe pelo scanner e receba um<br>protocolo de cuidado com a pele personalizado para você.</p>
       <div class="hero-actions">
         <a href="dermia-quiz-c1.html" class="btn-primary" id="hero-btn">Fazer minha avaliação</a>
         <a href="#como-funciona" class="btn-ghost" onclick="scrollToSection('como-funciona',-25);return false;">Ver como funciona</a>
@@ -1852,7 +1894,7 @@
             <source src="videos/Step_1_opt.mp4" type="video/mp4">
           </video>
         </div>
-        <h3>Responda o questionário</h3>
+        <h3>Preencha o prontuário</h3>
         <p>Algumas perguntas rápidas sobre sua pele, sua rotina e seu histórico. Isso vai levar menos de 6 minutos.</p>
       </div>
     </div>
@@ -2057,7 +2099,7 @@
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Funciona para pele sensível ou gestantes?</button>
-      <div class="faq-a">Sim. Durante o questionário você informa condições especiais como gravidez ou amamentação. O diagnóstico leva tudo isso em conta e só indica produtos seguros para o seu perfil.</div>
+      <div class="faq-a">Sim. Durante o prontuário você informa condições especiais como gravidez ou amamentação. O diagnóstico leva tudo isso em conta e só indica produtos seguros para o seu perfil.</div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Posso cancelar quando quiser?</button>
@@ -3705,6 +3747,25 @@
       requestAnimationFrame(update);
     }
     window.addEventListener('resize', update);
+  })();
+</script>
+<script>
+  /* ── CAROUSEL MOBILE FIX — devolve .steps-wrapper ao .how se foi movido ── */
+  (function carouselMobileFix() {
+    function apply() {
+      var wrapper = document.querySelector('.steps-wrapper');
+      var how     = document.querySelector('.how');
+      if (!wrapper || !how) return;
+      if (wrapper.parentElement !== how) {
+        how.appendChild(wrapper);
+        wrapper.style.cssText = '';
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', apply);
+    } else {
+      apply();
+    }
   })();
 </script>
 </body>
