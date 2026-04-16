@@ -3828,7 +3828,7 @@
 
     <!-- RADAR CHART -->
     <div id="radar-chart-wrap" style="display:flex; flex-direction:column; align-items:center;">
-      <svg id="skin-radar" viewBox="0 0 340 340" width="100%" style="max-width:340px; display:block;"></svg>
+      <svg id="skin-radar" viewBox="0 0 400 400" width="100%" style="max-width:400px; display:block;"></svg>
     </div>
 
     <div class="score-row" id="score-row-1">
@@ -5079,6 +5079,91 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
     return obj;
   }
 
+  // ── RADAR CHART — função global chamada tanto pela IA quanto pelo fallback ──
+  window._renderRadar = function(scores) {
+    const labels = ['Hidratação','Brilho','Firmeza','Textura','Oleosidade','Sensibilidade','Rugas','Manchas'];
+    const n = 8;
+    const cx = 200, cy = 200, maxR = 118;
+
+    function polar(angle, rad) {
+      return [cx + rad * Math.sin(angle), cy - rad * Math.cos(angle)];
+    }
+
+    const shadowId = 'radar-label-shadow';
+    let svgHtml = `<defs><filter id="${shadowId}" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(24,16,14,0.06)"/>
+    </filter></defs>`;
+
+    // Fundo marfim — octógono externo
+    let bgPts = [];
+    for (let i = 0; i < n; i++) bgPts.push(polar(2 * Math.PI * i / n, maxR));
+    svgHtml += `<polygon points="${bgPts.map(p=>p.join(',')).join(' ')}" fill="#F7F2EA"/>`;
+
+    // Anéis concêntricos
+    for (let ri = 1; ri <= 5; ri++) {
+      const rr = maxR * ri / 5;
+      let pts = [];
+      for (let i = 0; i < n; i++) pts.push(polar(2 * Math.PI * i / n, rr));
+      svgHtml += `<polygon points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="rgba(168,85,104,0.13)" stroke-width="1"/>`;
+    }
+
+    // Linhas de eixo
+    for (let i = 0; i < n; i++) {
+      const [x, y] = polar(2 * Math.PI * i / n, maxR);
+      svgHtml += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(168,85,104,0.18)" stroke-width="1"/>`;
+    }
+
+    // Polígono de dados
+    const dataFull = scores.map((s, i) => polar(2 * Math.PI * i / n, maxR * s / 100));
+    const dataZero = scores.map((_, i) => polar(2 * Math.PI * i / n, 0));
+    svgHtml += `<polygon id="radar-data-poly" points="${dataZero.map(p=>p.join(',')).join(' ')}"
+      fill="rgba(168,85,104,0.22)" stroke="rgba(168,85,104,0.75)" stroke-width="2" stroke-linejoin="round"/>`;
+
+    // Pontos nos vértices
+    scores.forEach((s, i) => {
+      svgHtml += `<circle class="radar-dot" cx="${cx}" cy="${cy}" r="4" fill="var(--wine)" opacity="0"/>`;
+    });
+
+    // Labels
+    labels.forEach((lbl, i) => {
+      const angle = 2 * Math.PI * i / n;
+      const [lx, ly] = polar(angle, maxR + 24);
+      const anchor = Math.abs(Math.sin(angle)) < 0.15 ? 'middle' : (Math.sin(angle) > 0 ? 'start' : 'end');
+      const dy = Math.cos(angle) > 0.15 ? '-0.3em' : (Math.cos(angle) < -0.15 ? '1.1em' : '0.4em');
+      svgHtml += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dy="${dy}"
+        font-family="DM Sans,sans-serif" font-size="12" fill="#4A3A34" font-weight="900"
+        filter="url(#${shadowId})">${lbl}</text>`;
+    });
+
+    const svg = document.getElementById('skin-radar');
+    if (!svg) return;
+    svg.innerHTML = svgHtml;
+
+    // Anima do centro para os valores reais
+    const startTime = performance.now();
+    const duration = 900;
+    function animRadar(now) {
+      const t = Math.min((now - startTime) / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      const poly = document.getElementById('radar-data-poly');
+      if (poly) {
+        const pts = dataFull.map((fp, i) => {
+          const sp = dataZero[i];
+          return [(sp[0] + (fp[0]-sp[0]) * ease).toFixed(2), (sp[1] + (fp[1]-sp[1]) * ease).toFixed(2)];
+        });
+        poly.setAttribute('points', pts.map(p=>p.join(',')).join(' '));
+      }
+      document.querySelectorAll('.radar-dot').forEach((dot, i) => {
+        const [fx, fy] = dataFull[i];
+        dot.setAttribute('cx', (cx + (fx-cx) * ease).toFixed(2));
+        dot.setAttribute('cy', (cy + (fy-cy) * ease).toFixed(2));
+        dot.setAttribute('opacity', ease.toFixed(2));
+      });
+      if (t < 1) requestAnimationFrame(animRadar);
+    }
+    requestAnimationFrame(animRadar);
+  };
+
   function preencherResultadoIA(r, nome) {
     r = sanitizeIA(r); // aplica travessão → hífen em todo o conteúdo da IA
     const titlePlaceholder = document.getElementById('result-title-placeholder');
@@ -5143,103 +5228,12 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       if (fill) fill.dataset.width = r.scores[chave] + '%';
     });
 
-    // ── RADAR CHART ──
-    (function() {
+    // ── RADAR CHART — via IA ──
+    if (typeof window._renderRadar === 'function') {
       const keys = ['hidratacao','brilho','firmeza','textura','oleosidade','sensibilidade','rugas','manchas'];
-      const labels = ['Hidratação','Brilho','Firmeza','Textura','Oleosidade','Sensibilidade','Rugas','Manchas'];
-      const n = 8;
-      const cx = 170, cy = 170, maxR = 118;
-      const scores = keys.map(k => (r.scores && r.scores[k] !== undefined ? r.scores[k] : 50));
-
-      function polar(angle, rad) {
-        return [cx + rad * Math.sin(angle), cy - rad * Math.cos(angle)];
-      }
-
-      let svgHtml = '';
-
-      // Ivory background polygon matching the outermost octagon ring
-      (function() {
-        let bgPts = [];
-        for (let i = 0; i < n; i++) bgPts.push(polar(2 * Math.PI * i / n, maxR));
-        svgHtml += `<polygon points="${bgPts.map(p=>p.join(',')).join(' ')}" fill="#F7F2EA"/>`;
-      })();
-
-      // Concentric octagon rings (grid)
-      for (let ri = 1; ri <= 5; ri++) {
-        const rr = maxR * ri / 5;
-        let pts = [];
-        for (let i = 0; i < n; i++) pts.push(polar(2 * Math.PI * i / n, rr));
-        svgHtml += `<polygon points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="rgba(168,85,104,0.13)" stroke-width="1"/>`;
-      }
-
-      // Axis lines
-      for (let i = 0; i < n; i++) {
-        const [x, y] = polar(2 * Math.PI * i / n, maxR);
-        svgHtml += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(168,85,104,0.18)" stroke-width="1"/>`;
-      }
-
-      // Data polygon starting at zero
-      const dataZero = keys.map((_, i) => polar(2 * Math.PI * i / n, 0));
-      const dataFull = scores.map((s, i) => polar(2 * Math.PI * i / n, maxR * s / 100));
-
-      svgHtml += `<polygon id="radar-data-poly" points="${dataZero.map(p=>p.join(',')).join(' ')}"
-        fill="rgba(168,85,104,0.22)" stroke="rgba(168,85,104,0.75)" stroke-width="2" stroke-linejoin="round"/>`;
-
-      // Dots at each vertex
-      scores.forEach((s, i) => {
-        const [x, y] = polar(2 * Math.PI * i / n, maxR * s / 100);
-        svgHtml += `<circle class="radar-dot" cx="${x}" cy="${y}" r="4" fill="var(--wine)" opacity="0"/>`;
-      });
-
-      // Labels at each tip — font-size 12, weight 900, shadow like result-sub
-      const shadowId = 'radar-label-shadow';
-      svgHtml = `<defs><filter id="${shadowId}" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(24,16,14,0.06)"/>
-      </filter></defs>` + svgHtml;
-
-      labels.forEach((lbl, i) => {
-        const angle = 2 * Math.PI * i / n;
-        const [lx, ly] = polar(angle, maxR + 24);
-        const anchor = Math.abs(Math.sin(angle)) < 0.15 ? 'middle' : (Math.sin(angle) > 0 ? 'start' : 'end');
-        const dy = Math.cos(angle) > 0.15 ? '-0.3em' : (Math.cos(angle) < -0.15 ? '1.1em' : '0.4em');
-        svgHtml += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dy="${dy}"
-          font-family="DM Sans,sans-serif" font-size="12" fill="#4A3A34" font-weight="900"
-          filter="url(#${shadowId})">${lbl}</text>`;
-      });
-
-      const svg = document.getElementById('skin-radar');
-      if (!svg) return;
-      svg.innerHTML = svgHtml;
-
-      // Animate from zero to real values
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          const startTime = performance.now();
-          const duration = 900;
-          function animRadar(now) {
-            const t = Math.min((now - startTime) / duration, 1);
-            const ease = 1 - Math.pow(1 - t, 3);
-            const poly = document.getElementById('radar-data-poly');
-            if (poly) {
-              const pts = dataFull.map((fp, i) => {
-                const sp = dataZero[i];
-                return [(sp[0] + (fp[0]-sp[0]) * ease).toFixed(2), (sp[1] + (fp[1]-sp[1]) * ease).toFixed(2)];
-              });
-              poly.setAttribute('points', pts.map(p=>p.join(',')).join(' '));
-            }
-            document.querySelectorAll('.radar-dot').forEach((dot, i) => {
-              const [fx, fy] = dataFull[i];
-              const sp = dataZero[i];
-              dot.setAttribute('cx', (sp[0] + (fx-sp[0]) * ease).toFixed(2));
-              dot.setAttribute('cy', (sp[1] + (fy-sp[1]) * ease).toFixed(2));
-              dot.setAttribute('opacity', ease.toFixed(2));
-            });
-            if (t < 1) requestAnimationFrame(animRadar);
-          }
-          requestAnimationFrame(animRadar);
-        }, 500);
-      });
-    })();
+      const scoresArr = keys.map(k => (r.scores && r.scores[k] !== undefined ? r.scores[k] : 50));
+      window._radarScores = scoresArr; // salva para o fallback no result-boxes-ready
+    }
 
     // Popula fotos do scanner na screen resultado
     (function() {
@@ -6143,6 +6137,32 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
         }
       }
     }); // end result-boxes-ready
+
+    // ── RADAR: renderiza sempre, usando scores salvos pela IA ou lendo dos pills ──
+    window.addEventListener('result-boxes-ready', function _radarReady() {
+      window.removeEventListener('result-boxes-ready', _radarReady);
+      if (typeof window._renderRadar !== 'function') return;
+
+      let scoresArr = window._radarScores; // definido por preencherResultadoIA se IA respondeu
+
+      if (!scoresArr) {
+        // Fallback: lê diretamente dos score pills já populados no DOM
+        const labels = ['Hidratação','Brilho','Firmeza','Textura','Oleosidade','Sensibilidade','Rugas','Manchas'];
+        scoresArr = labels.map(lbl => {
+          let val = 50;
+          document.querySelectorAll('.score-pill').forEach(pill => {
+            const lblEl = pill.querySelector('.score-lbl');
+            const valEl = pill.querySelector('.score-val');
+            if (lblEl && valEl && lblEl.textContent.trim() === lbl) {
+              val = parseInt(valEl.textContent) || 50;
+            }
+          });
+          return val;
+        });
+      }
+
+      window._renderRadar(scoresArr);
+    });
   }
 
   // ── PARTÍCULAS SCREEN AGUARDANDO ──────────────────────────────────────────
