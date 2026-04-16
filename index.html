@@ -5302,35 +5302,6 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       svgMobile.innerHTML = svgHtml;
     }
 
-    // Float nos dois eixos para todas as pílulas (desktop + mobile)
-    function startPillFloat(svgEl) {
-      if (!svgEl) return;
-      const fos = Array.from(svgEl.querySelectorAll('foreignObject'));
-      const t0 = performance.now();
-      // Parâmetros por pílula: período e fase levemente diferentes para movimento orgânico
-      const params = fos.map((fo, i) => ({
-        fo,
-        baseX: parseFloat(fo.getAttribute('x')),
-        baseY: parseFloat(fo.getAttribute('y')),
-        periodY: 3800 + i * 270,
-        periodX: 5100 + i * 310,
-        ampY: 3.5,
-        ampX: 2.0,
-        phaseY: i * 0.75,
-        phaseX: i * 1.1,
-      }));
-      (function tick(now) {
-        const t = now - t0;
-        params.forEach(p => {
-          const y = p.ampY * Math.sin(2 * Math.PI * t / p.periodY + p.phaseY);
-          const x = p.ampX * Math.sin(2 * Math.PI * t / p.periodX + p.phaseX);
-          p.fo.setAttribute('x', (p.baseX + x).toFixed(2));
-          p.fo.setAttribute('y', (p.baseY + y).toFixed(2));
-        });
-        requestAnimationFrame(tick);
-      })(t0);
-    }
-
     // Anima do centro para os valores reais
     const startTime = performance.now();
     const duration = 900;
@@ -5354,10 +5325,6 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       if (t < 1) requestAnimationFrame(animRadar);
     }
     requestAnimationFrame(animRadar);
-
-    // Inicia float das pílulas em ambos os SVGs
-    startPillFloat(svg);
-    startPillFloat(svgMobile);
   };
 
   function preencherResultadoIA(r, nome) {
