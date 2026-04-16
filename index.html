@@ -1152,7 +1152,86 @@
   }
 
   @media (min-width: 581px) {
-    .result-screen { max-width: 740px; padding-top: 128px !important; padding-bottom: 120px !important; }
+    .result-screen { max-width: 1050px; padding-top: 128px !important; padding-bottom: 120px !important; }
+  }
+
+  /* ── DESKTOP 2-COLUMN LAYOUT ── */
+  @media (min-width: 581px) {
+    /* Wrapper das 2 colunas */
+    .result-two-col-wrap {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      gap: 24px;
+      align-items: start;
+      width: 100%;
+    }
+
+    /* Foto frente isolada — visível apenas em desktop */
+    .result-photo-front-only {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .result-photo-front-only .result-photo-box {
+      width: 100%;
+      aspect-ratio: 3/4;
+    }
+
+    /* Score rows na col-left: 2 colunas em vez de 4 */
+    .result-col-left .score-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Carrossel de fotos — oculto em desktop (substituído pela foto frente isolada) */
+    .result-col-right .result-photos-wrap {
+      display: none !important;
+    }
+
+    /* Boxes com mobile-only: ocultos em desktop */
+    .result-section-mobile-only {
+      display: none !important;
+    }
+
+    /* Boxes below-cols: full width abaixo das colunas */
+    .result-below-cols {
+      width: 100%;
+    }
+
+    /* result-badge na col-right */
+    .result-col-right .result-badge {
+      margin-top: 0;
+    }
+
+    /* Ajuste do score-row no col-left: sem margin-top negativa do radar */
+    .result-col-left #score-row-1 {
+      margin-top: 0;
+    }
+  }
+
+  /* Mobile: layout linear, col-left oculta (seus elementos já existem na col-right como mobile-only) */
+  @media (max-width: 580px) {
+    .result-two-col-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+    /* Em mobile: col-left completamente oculta — todo conteúdo existe na col-right como mobile-only */
+    .result-col-left {
+      display: none !important;
+    }
+    /* Em mobile: foto frente isolada oculta (usa o carrossel) */
+    .result-photo-front-only {
+      display: none !important;
+    }
+    /* Em mobile: boxes mobile-only visíveis */
+    .result-section-mobile-only {
+      display: block !important;
+    }
+    /* Em mobile: box dicas-inteligentes na col-left oculto (existe mobile-only na col-right) */
+    #box-dicas-inteligentes {
+      display: none !important;
+    }
   }
 
   /* Animações de entrada do título e subtítulo da screen resultado — igual à screen 0 */
@@ -1330,7 +1409,7 @@
     overflow: hidden;
     isolation: isolate;
   }
-  .result-section:not(#box-idade-pele):not(#box-dicas-inteligentes)::before {
+  .result-section:not(#box-idade-pele):not(#box-dicas-inteligentes):not(#box-dicas-inteligentes-mobile)::before {
     content: '';
     position: absolute;
     top: 0; left: 5%; right: 5%;
@@ -1345,7 +1424,7 @@
     pointer-events: none;
     z-index: 2;
   }
-  .result-section:not(#box-idade-pele):not(#box-dicas-inteligentes) > * { position: relative; z-index: 3; }
+  .result-section:not(#box-idade-pele):not(#box-dicas-inteligentes):not(#box-dicas-inteligentes-mobile) > * { position: relative; z-index: 3; }
   /* Box Idade da Pele: mantém apenas margin-bottom do layout */
   #box-idade-pele { margin-bottom: 14px; }
   .rs-title {
@@ -3795,144 +3874,198 @@
 <div id="result-overlay" style="display:none; position:fixed; inset:0; z-index:50; flex-direction:column; align-items:center; justify-content:flex-start; background:transparent; overflow-y:auto;">
   <div class="screen result-screen" id="screen-result" data-screen="result" style="display:block; width:100%; padding:96px 24px 120px;">
 
+    <!-- ── DESKTOP: 2-column layout wrapper ── -->
+    <div class="result-two-col-wrap">
+
+      <!-- ── COLUNA ESQUERDA ── -->
+      <div class="result-col-left">
+
+        <!-- Foto Frente (apenas, sem carrossel — desktop only, sincronizada via JS) -->
+        <div class="result-photo-front-only" id="result-photo-front-only-wrap" style="display:none;">
+          <div class="result-photo-box" id="result-photo-front-desktop">
+            <div class="photo-placeholder">📸</div>
+          </div>
+        </div>
+
+        <!-- RADAR CHART -->
+        <div id="radar-chart-wrap" style="display:flex; flex-direction:column; align-items:center;">
+          <svg id="skin-radar" viewBox="0 0 420 420" width="100%" style="max-width:400px; display:block;"></svg>
+        </div>
+
+        <div class="score-row" id="score-row-1">
+          <div class="score-pill"><div class="score-val">48%</div><div class="score-lbl">Hidratação</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="48%"></div></div></div>
+          <div class="score-pill"><div class="score-val">57%</div><div class="score-lbl">Brilho</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="57%"></div></div></div>
+          <div class="score-pill"><div class="score-val">63%</div><div class="score-lbl">Firmeza</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="63%"></div></div></div>
+          <div class="score-pill"><div class="score-val">72%</div><div class="score-lbl">Textura</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="72%"></div></div></div>
+        </div>
+        <div class="score-row" style="margin-top:8px;">
+          <div class="score-pill"><div class="score-val">44%</div><div class="score-lbl">Oleosidade</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="44%"></div></div></div>
+          <div class="score-pill"><div class="score-val">81%</div><div class="score-lbl">Sensibilidade</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="81%"></div></div></div>
+          <div class="score-pill"><div class="score-val">31%</div><div class="score-lbl">Rugas</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="31%"></div></div></div>
+          <div class="score-pill"><div class="score-val">38%</div><div class="score-lbl">Manchas</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="38%"></div></div></div>
+        </div>
+
+        <div class="result-section" id="box-dicas-inteligentes" style="background:var(--ink); border-radius:22px; padding:28px 26px; position:relative; overflow:hidden; margin-top: 6px; box-shadow:0 8px 32px rgba(74,127,165,0.22), inset 0 1px 0 rgba(255,255,255,0.07);">
+          <!-- glow wine topo -->
+          <div style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:260px;height:260px;background:radial-gradient(circle,var(--wine) 0%,transparent 70%);opacity:0.1;border-radius:50%;pointer-events:none;"></div>
+          <!-- glow steel canto -->
+          <div style="position:absolute;bottom:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,var(--steel) 0%,transparent 70%);opacity:0.1;border-radius:50%;pointer-events:none;"></div>
+          <div class="rs-title" style="color:var(--ivory);">Dicas inteligentes</div>
+          <div id="dicas-lista" style="display:flex; flex-direction:column; gap:6px; margin-top:4px;"></div>
+        </div>
+
+      </div><!-- /result-col-left -->
+
+      <!-- ── COLUNA DIREITA ── -->
+      <div class="result-col-right">
+
         <div class="result-badge">✦ Protocolo</div>
-    <h2 class="result-name" id="resultTitle" style="position:relative;">
-      <span id="result-title-placeholder" style="display:block; visibility:hidden; pointer-events:none;" aria-hidden="true">Seu perfil de pele é <em>mista com tendência oleosa</em>.</span>
-      <span id="result-title-typed" style="display:none; position:absolute; top:0; left:0; width:100%;"></span>
-    </h2>
+        <h2 class="result-name" id="resultTitle" style="position:relative;">
+          <span id="result-title-placeholder" style="display:block; visibility:hidden; pointer-events:none;" aria-hidden="true">Seu perfil de pele é <em>mista com tendência oleosa</em>.</span>
+          <span id="result-title-typed" style="display:none; position:absolute; top:0; left:0; width:100%;"></span>
+        </h2>
 
-    <!-- Fotos do scanner -->
-    <div class="result-photos-wrap" id="result-photos-wrap" style="display:none; overflow:hidden;">
-      <div class="result-photos-track" id="result-photos-track">
-        <div class="result-photo-col">
-          <div class="result-photo-box" id="result-photo-front">
-            <div class="photo-placeholder">📸</div>
-          </div>
-          <span class="result-photo-pill">Frente</span>
-        </div>
-        <div class="result-photo-col">
-          <div class="result-photo-box" id="result-photo-left">
-            <div class="photo-placeholder">📸</div>
-          </div>
-          <span class="result-photo-pill">Esquerda</span>
-        </div>
-        <div class="result-photo-col">
-          <div class="result-photo-box" id="result-photo-right">
-            <div class="photo-placeholder">📸</div>
-          </div>
-          <span class="result-photo-pill">Direita</span>
-        </div>
-      </div>
-    </div>
-    <p class="result-sub" id="resultSubtitle" style="visibility:hidden;">Oi, <span id="resultNome">você</span>! Te avaliamos e montamos uma <strong>rotina personalizada</strong> para os próximos dias.</p>
-
-    <!-- RADAR CHART -->
-    <div id="radar-chart-wrap" style="display:flex; flex-direction:column; align-items:center;">
-      <svg id="skin-radar" viewBox="0 0 400 400" width="100%" style="max-width:400px; display:block;"></svg>
-    </div>
-
-    <div class="score-row" id="score-row-1">
-      <div class="score-pill"><div class="score-val">48%</div><div class="score-lbl">Hidratação</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="48%"></div></div></div>
-      <div class="score-pill"><div class="score-val">57%</div><div class="score-lbl">Brilho</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="57%"></div></div></div>
-      <div class="score-pill"><div class="score-val">63%</div><div class="score-lbl">Firmeza</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="63%"></div></div></div>
-      <div class="score-pill"><div class="score-val">72%</div><div class="score-lbl">Textura</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="72%"></div></div></div>
-    </div>
-    <div class="score-row" style="margin-top:8px;">
-      <div class="score-pill"><div class="score-val">44%</div><div class="score-lbl">Oleosidade</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="44%"></div></div></div>
-      <div class="score-pill"><div class="score-val">81%</div><div class="score-lbl">Sensibilidade</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="81%"></div></div></div>
-      <div class="score-pill"><div class="score-val">31%</div><div class="score-lbl">Rugas</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="31%"></div></div></div>
-      <div class="score-pill"><div class="score-val">38%</div><div class="score-lbl">Manchas</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="38%"></div></div></div>
-    </div>
-
-    <div class="result-section">
-      <div class="rs-title">Avaliação da IA</div>
-      <p class="diagnosis-text"><span style="color:var(--wine);margin-right:6px;">✦</span>Sua pele apresenta <strong>oleosidade moderada a alta</strong> na zona T com sensação de ressecamento nas bochechas - padrão clássico de pele mista. A análise das fotos indica <strong>poros dilatados</strong> nas laterais do nariz e leve <strong>desuniformidade de textura</strong>. Não identificamos inflamação ativa, mas há predisposição à acne quando a barreira protetora está comprometida. Esse perfil responde muito bem a uma rotina simples e consistente com os ativos certos.</p>
-    </div>
-
-    <!-- BOX: Idade da Pele -->
-    <div id="box-idade-pele" class="result-section" style="background:var(--ink); border-radius:22px; padding:28px 26px; position:relative; overflow:hidden; box-shadow:0 8px 32px rgba(74,127,165,0.22), inset 0 1px 0 rgba(255,255,255,0.07);">
-
-      <!-- glow wine topo -->
-      <div style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:260px;height:260px;background:radial-gradient(circle,var(--wine) 0%,transparent 70%);opacity:0.1;border-radius:50%;pointer-events:none;"></div>
-      <!-- glow steel canto -->
-      <div style="position:absolute;bottom:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,var(--steel) 0%,transparent 70%);opacity:0.1;border-radius:50%;pointer-events:none;"></div>
-      <div style="font-family:var(--serif);font-size:26px;font-weight:700;color:var(--ivory);margin-bottom:18px;position:relative;filter:drop-shadow(0 2px 8px rgba(168,85,104,0.08));">Idade da pele com <em style="color:var(--blush);">envelhecimento precoce</em></div>
-      <div class="age-compare-box" style="position:relative;">
-        <div class="age-col" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.10);">
-          <div class="age-col-value" id="ageReal" style="color:var(--ivory);">—</div>
-          <span class="age-col-sublabel" style="color:var(--ivory);">Sua idade em anos cronológicos</span>
-        </div>
-        <div class="age-divider">
-          <div class="age-divider-line" style="background:rgba(255,255,255,0.15);"></div>
-          <span class="age-divider-icon" style="color:rgba(247,242,234,0.30);">≈</span>
-          <div class="age-divider-line" style="background:rgba(255,255,255,0.15);"></div>
-        </div>
-        <div class="age-col" style="background:rgba(247,242,234,0.10);border-color:rgba(255,255,255,0.18);">
-          <div class="age-col-value" id="ageSkin" style="color:var(--blush);"><em style="color:var(--blush);">—</em></div>
-          <span class="age-col-sublabel" style="color:var(--ivory);">Idade da sua pele estimada pela IA</span>
-        </div>
-      </div>
-      <p id="ageDelta" style="display:none;font-size:14px;color:rgba(247,242,234,0.55);line-height:1.7;margin-top:18px;position:relative;"></p>
-    </div>
-
-    <!-- BOX: Produto Essencial -->
-    <div class="result-section" id="box-produto-essencial">
-      <div class="rs-title">Seu produto essencial</div>
-      <p class="diagnosis-text" style="margin-bottom:15px;">Com base na sua avaliação, a IA identificou o <strong>maior ponto fraco</strong> da sua pele - e esse é o produto que age diretamente sobre ele tratando a raiz do problema.</p>
-      <div class="essential-product-wrap">
-        <div class="essential-product-card">
-          <div class="essential-emoji-wrap" id="essentialEmoji">💧</div>
-          <div class="essential-prod-info">
-            <div class="essential-prod-name" id="essentialName">Hydra Boost Oil-Free</div>
-            <div class="essential-prod-brand" id="essentialBrand">Neutrogena</div>
-            <div class="essential-prod-brand" id="essentialPrice">~R$ 72</div>
-          </div>
-          <span class="essential-badge" id="essentialBadge">⭑ Prioridade</span>
-          <div class="essential-prod-reason" id="essentialReason">Sua pele está pedindo por <strong>mais hidratação</strong> — o parâmetro mais baixo do seu diagnóstico. Esse produto resolve o desequilíbrio que está na raiz da maioria dos outros sintomas.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="result-section">
-      <div class="rs-title">Protocolo completo</div>
-      <div class="routine-steps">
-        <div class="routine-group">
-          <span class="rs-period">☀︎ Matinal</span>
-          <div class="routine-group-cards" id="rotina-matinal-cards">
-            <div class="routine-step"><div class="rs-emoji">🧼</div><div><div class="rs-step-name">Limpeza suave</div><div class="rs-step-desc">Remove impurezas e excesso de oleosidade sem comprometer a barreira da pele.</div></div></div>
-            <div class="routine-step"><div class="rs-emoji">✨</div><div><div class="rs-step-name">Sérum vitamina C</div><div class="rs-step-desc">Clareia manchas, uniformiza o tom e protege contra radicais livres ao longo do dia.</div></div></div>
-            <div class="routine-step"><div class="rs-emoji">💧</div><div><div class="rs-step-name">Hidratante oil-free</div><div class="rs-step-desc">Hidrata sem obstruir os poros, deixando a pele macia e com acabamento seco.</div></div></div>
-            <div class="routine-step"><div class="rs-emoji">☀️</div><div><div class="rs-step-name">FPS 50</div><div class="rs-step-desc">Proteção solar é obrigatória — sem ela, a rotina perde 60% da eficácia.</div></div></div>
+        <!-- Fotos do scanner (carrossel — mobile only, hidden desktop) -->
+        <div class="result-photos-wrap" id="result-photos-wrap" style="display:none; overflow:hidden;">
+          <div class="result-photos-track" id="result-photos-track">
+            <div class="result-photo-col">
+              <div class="result-photo-box" id="result-photo-front">
+                <div class="photo-placeholder">📸</div>
+              </div>
+              <span class="result-photo-pill">Frente</span>
+            </div>
+            <div class="result-photo-col">
+              <div class="result-photo-box" id="result-photo-left">
+                <div class="photo-placeholder">📸</div>
+              </div>
+              <span class="result-photo-pill">Esquerda</span>
+            </div>
+            <div class="result-photo-col">
+              <div class="result-photo-box" id="result-photo-right">
+                <div class="photo-placeholder">📸</div>
+              </div>
+              <span class="result-photo-pill">Direita</span>
+            </div>
           </div>
         </div>
-        <div class="routine-group">
-          <span class="rs-period">⏾ Noturno</span>
-          <div class="routine-group-cards" id="rotina-noturna-cards">
-            <div class="routine-step"><div class="rs-emoji">🫧</div><div><div class="rs-step-name">Limpeza dupla</div><div class="rs-step-desc">Remove maquiagem, protetor e impurezas acumuladas ao longo do dia.</div></div></div>
-            <div class="routine-step"><div class="rs-emoji">🧪</div><div><div class="rs-step-name">Ácido salicílico (2×/sem)</div><div class="rs-step-desc">Desobstrui os poros. Use apenas 2 vezes por semana nos primeiros 30 dias para a pele se adaptar.</div></div></div>
-            <div class="routine-step"><div class="rs-emoji">🌙</div><div><div class="rs-step-name">Hidratante noturno</div><div class="rs-step-desc">Repõe a hidratação e apoia a regeneração da pele enquanto você dorme.</div></div></div>
+
+        <p class="result-sub" id="resultSubtitle" style="visibility:hidden;">Oi, <span id="resultNome">você</span>! Agora que passou por todas as etapas, aqui está a <strong>rotina personalizada</strong> que montamos para os seus próximos 15 dias.</p>
+
+        <!-- RADAR CHART — mobile only (em desktop fica na col-left) -->
+        <div id="radar-chart-wrap-mobile" class="result-section-mobile-only" style="display:flex; flex-direction:column; align-items:center;">
+          <svg id="skin-radar-mobile" viewBox="0 0 420 420" width="100%" style="max-width:400px; display:block;"></svg>
+        </div>
+
+        <!-- SCORE PILLS — mobile only (em desktop ficam na col-left) -->
+        <div class="score-row result-section-mobile-only" id="score-row-1-mobile" style="margin-top:-10px;">
+          <div class="score-pill"><div class="score-val">48%</div><div class="score-lbl">Hidratação</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="48%"></div></div></div>
+          <div class="score-pill"><div class="score-val">57%</div><div class="score-lbl">Brilho</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="57%"></div></div></div>
+          <div class="score-pill"><div class="score-val">63%</div><div class="score-lbl">Firmeza</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="63%"></div></div></div>
+          <div class="score-pill"><div class="score-val">72%</div><div class="score-lbl">Textura</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="72%"></div></div></div>
+        </div>
+        <div class="score-row result-section-mobile-only" style="margin-top:8px;">
+          <div class="score-pill"><div class="score-val">44%</div><div class="score-lbl">Oleosidade</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="44%"></div></div></div>
+          <div class="score-pill"><div class="score-val">81%</div><div class="score-lbl">Sensibilidade</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="81%"></div></div></div>
+          <div class="score-pill"><div class="score-val">31%</div><div class="score-lbl">Rugas</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="31%"></div></div></div>
+          <div class="score-pill"><div class="score-val">38%</div><div class="score-lbl">Manchas</div><div class="score-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%" data-width="38%"></div></div></div>
+        </div>
+
+        <!-- Avaliação da IA — logo acima do box Idade da Pele -->
+        <div class="result-section" id="box-avaliacao-ia">
+          <div class="rs-title">Avaliação da IA</div>
+          <p class="diagnosis-text"><span style="color:var(--wine);margin-right:6px;">✦</span>Sua pele apresenta <strong>oleosidade moderada a alta</strong> na zona T com sensação de ressecamento nas bochechas - padrão clássico de pele mista. A análise das fotos indica <strong>poros dilatados</strong> nas laterais do nariz e leve <strong>desuniformidade de textura</strong>. Não identificamos inflamação ativa, mas há predisposição à acne quando a barreira protetora está comprometida. Esse perfil responde muito bem a uma rotina simples e consistente com os ativos certos.</p>
+        </div>
+
+        <!-- BOX: Idade da Pele -->
+        <div id="box-idade-pele" class="result-section" style="background:var(--ink); border-radius:22px; padding:28px 26px; position:relative; overflow:hidden; box-shadow:0 8px 32px rgba(74,127,165,0.22), inset 0 1px 0 rgba(255,255,255,0.07);">
+          <!-- glow wine topo -->
+          <div style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:260px;height:260px;background:radial-gradient(circle,var(--wine) 0%,transparent 70%);opacity:0.1;border-radius:50%;pointer-events:none;"></div>
+          <!-- glow steel canto -->
+          <div style="position:absolute;bottom:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,var(--steel) 0%,transparent 70%);opacity:0.1;border-radius:50%;pointer-events:none;"></div>
+          <div style="font-family:var(--serif);font-size:26px;font-weight:700;color:var(--ivory);margin-bottom:18px;position:relative;filter:drop-shadow(0 2px 8px rgba(168,85,104,0.08));">Idade da pele com <em style="color:var(--blush);">envelhecimento precoce</em></div>
+          <div class="age-compare-box" style="position:relative;">
+            <div class="age-col" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.10);">
+              <div class="age-col-value" id="ageReal" style="color:var(--ivory);">—</div>
+              <span class="age-col-sublabel" style="color:var(--ivory);">Sua idade em anos cronológicos</span>
+            </div>
+            <div class="age-divider">
+              <div class="age-divider-line" style="background:rgba(255,255,255,0.15);"></div>
+              <span class="age-divider-icon" style="color:rgba(247,242,234,0.30);">≈</span>
+              <div class="age-divider-line" style="background:rgba(255,255,255,0.15);"></div>
+            </div>
+            <div class="age-col" style="background:rgba(247,242,234,0.10);border-color:rgba(255,255,255,0.18);">
+              <div class="age-col-value" id="ageSkin" style="color:var(--blush);"><em style="color:var(--blush);">—</em></div>
+              <span class="age-col-sublabel" style="color:var(--ivory);">Idade da sua pele estimada pela IA</span>
+            </div>
+          </div>
+          <p id="ageDelta" style="display:none;font-size:14px;color:rgba(247,242,234,0.55);line-height:1.7;margin-top:18px;position:relative;"></p>
+        </div>
+
+        <!-- BOX: Produto Essencial -->
+        <div class="result-section" id="box-produto-essencial">
+          <div class="rs-title">Seu produto essencial</div>
+          <p class="diagnosis-text" style="margin-bottom:15px;">Com base na sua avaliação, a IA identificou o <strong>maior ponto fraco</strong> da sua pele - e esse é o produto que age diretamente na raiz do problema.</p>
+          <div class="essential-product-wrap">
+            <div class="essential-product-card">
+              <div class="essential-emoji-wrap" id="essentialEmoji">💧</div>
+              <div class="essential-prod-info">
+                <div class="essential-prod-name" id="essentialName">Hydra Boost Oil-Free</div>
+                <div class="essential-prod-brand" id="essentialBrand">Neutrogena</div>
+                <div class="essential-prod-brand" id="essentialPrice">~R$ 72</div>
+              </div>
+              <span class="essential-badge" id="essentialBadge">⭑ Prioridade</span>
+              <div class="essential-prod-reason" id="essentialReason">Sua pele está pedindo por <strong>mais hidratação</strong> — o parâmetro mais baixo do seu diagnóstico. Esse produto resolve o desequilíbrio que está na raiz da maioria dos outros sintomas.</div>
+            </div>
           </div>
         </div>
-        <div class="routine-group" id="rotina-semanal-group">
-          <span class="rs-period">➤ Semanal</span>
-          <div class="routine-group-cards" id="rotina-semanal-cards">
-            <div class="routine-step"><div class="rs-emoji">🌿</div><div><div class="rs-step-name">Máscara de argila na zona T (1×/sem)</div><div class="rs-step-desc">Purifica e minimiza os poros sem ressecar as bochechas. Aplique só na zona T.</div></div></div>
+
+        <div class="result-section">
+          <div class="rs-title">Protocolo completo</div>
+          <div class="routine-steps">
+            <div class="routine-group">
+              <span class="rs-period">☀︎ Matinal</span>
+              <div class="routine-group-cards" id="rotina-matinal-cards">
+                <div class="routine-step"><div class="rs-emoji">🧼</div><div><div class="rs-step-name">Limpeza suave</div><div class="rs-step-desc">Remove impurezas e excesso de oleosidade sem comprometer a barreira da pele.</div></div></div>
+                <div class="routine-step"><div class="rs-emoji">✨</div><div><div class="rs-step-name">Sérum vitamina C</div><div class="rs-step-desc">Clareia manchas, uniformiza o tom e protege contra radicais livres ao longo do dia.</div></div></div>
+                <div class="routine-step"><div class="rs-emoji">💧</div><div><div class="rs-step-name">Hidratante oil-free</div><div class="rs-step-desc">Hidrata sem obstruir os poros, deixando a pele macia e com acabamento seco.</div></div></div>
+                <div class="routine-step"><div class="rs-emoji">☀️</div><div><div class="rs-step-name">FPS 50</div><div class="rs-step-desc">Proteção solar é obrigatória — sem ela, a rotina perde 60% da eficácia.</div></div></div>
+              </div>
+            </div>
+            <div class="routine-group">
+              <span class="rs-period">⏾ Noturno</span>
+              <div class="routine-group-cards" id="rotina-noturna-cards">
+                <div class="routine-step"><div class="rs-emoji">🫧</div><div><div class="rs-step-name">Limpeza dupla</div><div class="rs-step-desc">Remove maquiagem, protetor e impurezas acumuladas ao longo do dia.</div></div></div>
+                <div class="routine-step"><div class="rs-emoji">🧪</div><div><div class="rs-step-name">Ácido salicílico (2×/sem)</div><div class="rs-step-desc">Desobstrui os poros. Use apenas 2 vezes por semana nos primeiros 30 dias para a pele se adaptar.</div></div></div>
+                <div class="routine-step"><div class="rs-emoji">🌙</div><div><div class="rs-step-name">Hidratante noturno</div><div class="rs-step-desc">Repõe a hidratação e apoia a regeneração da pele enquanto você dorme.</div></div></div>
+              </div>
+            </div>
+            <div class="routine-group" id="rotina-semanal-group">
+              <span class="rs-period">➤ Semanal</span>
+              <div class="routine-group-cards" id="rotina-semanal-cards">
+                <div class="routine-step"><div class="rs-emoji">🌿</div><div><div class="rs-step-name">Máscara de argila na zona T (1×/sem)</div><div class="rs-step-desc">Purifica e minimiza os poros sem ressecar as bochechas. Aplique só na zona T.</div></div></div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="result-section" id="box-dicas-inteligentes" style="background:var(--ink); border-radius:22px; padding:28px 26px; position:relative; overflow:hidden; margin-top: 6px; box-shadow:0 8px 32px rgba(74,127,165,0.22), inset 0 1px 0 rgba(255,255,255,0.07);">
-      <!-- glow wine topo -->
-      <div style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:260px;height:260px;background:radial-gradient(circle,var(--wine) 0%,transparent 70%);opacity:0.1;border-radius:50%;pointer-events:none;"></div>
-      <!-- glow steel canto -->
-      <div style="position:absolute;bottom:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,var(--steel) 0%,transparent 70%);opacity:0.1;border-radius:50%;pointer-events:none;"></div>
-      <div class="rs-title" style="color:var(--ivory);">Dicas inteligentes</div>
-      <div id="dicas-lista" style="display:flex; flex-direction:column; gap:6px; margin-top:4px;"></div>
-    </div>
+        <!-- Dicas inteligentes — mobile only (na col-left em desktop) -->
+        <div class="result-section result-section-mobile-only" id="box-dicas-inteligentes-mobile" style="background:var(--ink); border-radius:22px; padding:28px 26px; position:relative; overflow:hidden; margin-top: 6px; box-shadow:0 8px 32px rgba(74,127,165,0.22), inset 0 1px 0 rgba(255,255,255,0.07);">
+          <!-- glow wine topo -->
+          <div style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:260px;height:260px;background:radial-gradient(circle,var(--wine) 0%,transparent 70%);opacity:0.1;border-radius:50%;pointer-events:none;"></div>
+          <!-- glow steel canto -->
+          <div style="position:absolute;bottom:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,var(--steel) 0%,transparent 70%);opacity:0.1;border-radius:50%;pointer-events:none;"></div>
+          <div class="rs-title" style="color:var(--ivory);">Dicas inteligentes</div>
+          <div id="dicas-lista-mobile" style="display:flex; flex-direction:column; gap:6px; margin-top:4px;"></div>
+        </div>
 
-    <!-- BOX: Dicas Inteligentes -->
-    <div class="result-section">
+      </div><!-- /result-col-right -->
+
+    </div><!-- /result-two-col-wrap -->
+
+    <!-- ── ABAIXO DAS COLUNAS: 1 coluna full-width ── -->
+
+    <!-- BOX: Combinam com você -->
+    <div class="result-section result-below-cols">
       <div class="rs-title">Combinam com você</div>
       <div class="product-recs" id="indicados-para-voce">
         <div class="prod-rec"><div class="prod-emoji">🧴</div><div><div class="prod-name">Effaclar Gel Espumante</div><div class="prod-brand">La Roche-Posay</div><div class="prod-price">~R$ 68</div></div><span class="prod-fit">❤︎ 97%</span></div>
@@ -3943,7 +4076,7 @@
       </div>
     </div>
 
-    <div class="result-cta">
+    <div class="result-cta result-below-cols">
       <h3>Assine e veja sua pele <em>evoluir<span style="color:var(--ivory);"></span></em> a cada dia.</h3>
       <p style="max-width:450px;margin-left:auto;margin-right:auto;">Receba os cuidados de uma assistente virtual capaz de ajustar seu protocolo de acordo com suas necessidades.</p>
       <a href="#" class="btn-primary-full">Assinar agora</a>
@@ -5083,16 +5216,13 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
   window._renderRadar = function(scores) {
     const labels = ['Hidratação','Brilho','Firmeza','Textura','Oleosidade','Sensibilidade','Rugas','Manchas'];
     const n = 8;
-    const cx = 200, cy = 200, maxR = 118;
+    const cx = 210, cy = 210, maxR = 118;
 
     function polar(angle, rad) {
       return [cx + rad * Math.sin(angle), cy - rad * Math.cos(angle)];
     }
 
-    const shadowId = 'radar-label-shadow';
-    let svgHtml = `<defs><filter id="${shadowId}" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(24,16,14,0.06)"/>
-    </filter></defs>`;
+    let svgHtml = `<defs></defs>`;
 
     // Fundo marfim — octógono externo
     let bgPts = [];
@@ -5124,20 +5254,82 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       svgHtml += `<circle class="radar-dot" cx="${cx}" cy="${cy}" r="4" fill="var(--wine)" opacity="0"/>`;
     });
 
-    // Labels
+    // Pílulas glassmorphism via foreignObject
+    // Largura estimada por label (font ~11px, padding 10px each side)
+    const lblWidths = { 'Hidratação':80, 'Brilho':52, 'Firmeza':56, 'Textura':57,
+                        'Oleosidade':74, 'Sensibilidade':96, 'Rugas':52, 'Manchas':64 };
+    const PH = 24;
     labels.forEach((lbl, i) => {
       const angle = 2 * Math.PI * i / n;
-      const [lx, ly] = polar(angle, maxR + 24);
-      const anchor = Math.abs(Math.sin(angle)) < 0.15 ? 'middle' : (Math.sin(angle) > 0 ? 'start' : 'end');
-      const dy = Math.cos(angle) > 0.15 ? '-0.3em' : (Math.cos(angle) < -0.15 ? '1.1em' : '0.4em');
-      svgHtml += `<text x="${lx}" y="${ly}" text-anchor="${anchor}" dy="${dy}"
-        font-family="DM Sans,sans-serif" font-size="12" fill="#4A3A34" font-weight="900"
-        filter="url(#${shadowId})">${lbl}</text>`;
+      const [lx, ly] = polar(angle, maxR + 42);
+      const pw = lblWidths[lbl] || 72;
+      const x = lx - pw / 2;
+      const y = ly - PH / 2;
+      svgHtml += `
+        <foreignObject x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${pw + 4}" height="${PH + 4}" overflow="visible">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            white-space:nowrap;
+            font-family:'DM Sans',sans-serif;
+            font-size:12px;
+            font-weight:500;
+            letter-spacing:0.05em;
+            color:#4A3A34;
+            background:rgba(253,250,247,0.70);
+            backdrop-filter:blur(8px);
+            -webkit-backdrop-filter:blur(8px);
+            border:1px solid rgba(255,255,255,0.60);
+            padding:6px 14px;
+            border-radius:100px;
+            box-shadow:0 2px 8px rgba(24,16,14,0.07),inset 0 1px 0 rgba(255,255,255,0.8);
+            width:max-content;
+            line-height:1;
+          ">${lbl}</div>
+        </foreignObject>`;
     });
 
     const svg = document.getElementById('skin-radar');
     if (!svg) return;
+    svg.setAttribute('viewBox', '0 0 420 420');
     svg.innerHTML = svgHtml;
+
+    // Também renderiza no SVG mobile se existir
+    const svgMobile = document.getElementById('skin-radar-mobile');
+    if (svgMobile) {
+      svgMobile.setAttribute('viewBox', '0 0 420 420');
+      svgMobile.innerHTML = svgHtml;
+    }
+
+    // Float nos dois eixos para todas as pílulas (desktop + mobile)
+    function startPillFloat(svgEl) {
+      if (!svgEl) return;
+      const fos = Array.from(svgEl.querySelectorAll('foreignObject'));
+      const t0 = performance.now();
+      // Parâmetros por pílula: período e fase levemente diferentes para movimento orgânico
+      const params = fos.map((fo, i) => ({
+        fo,
+        baseX: parseFloat(fo.getAttribute('x')),
+        baseY: parseFloat(fo.getAttribute('y')),
+        periodY: 3800 + i * 270,
+        periodX: 5100 + i * 310,
+        ampY: 3.5,
+        ampX: 2.0,
+        phaseY: i * 0.75,
+        phaseX: i * 1.1,
+      }));
+      (function tick(now) {
+        const t = now - t0;
+        params.forEach(p => {
+          const y = p.ampY * Math.sin(2 * Math.PI * t / p.periodY + p.phaseY);
+          const x = p.ampX * Math.sin(2 * Math.PI * t / p.periodX + p.phaseX);
+          p.fo.setAttribute('x', (p.baseX + x).toFixed(2));
+          p.fo.setAttribute('y', (p.baseY + y).toFixed(2));
+        });
+        requestAnimationFrame(tick);
+      })(t0);
+    }
 
     // Anima do centro para os valores reais
     const startTime = performance.now();
@@ -5162,6 +5354,10 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       if (t < 1) requestAnimationFrame(animRadar);
     }
     requestAnimationFrame(animRadar);
+
+    // Inicia float das pílulas em ambos os SVGs
+    startPillFloat(svg);
+    startPillFloat(svgMobile);
   };
 
   function preencherResultadoIA(r, nome) {
@@ -5241,7 +5437,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       const wrap = document.getElementById('result-photos-wrap');
       if (!wrap) return;
       const map = { front: 'result-photo-front', left: 'result-photo-right', right: 'result-photo-left' };
-      let anyPhoto = false;
+
       Object.entries(map).forEach(([key, id]) => {
         const box = document.getElementById(id);
         if (!box) return;
@@ -5251,11 +5447,24 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
           const img = document.createElement('img');
           img.src = src;
           box.appendChild(img);
-          anyPhoto = true;
 
+          // Sincroniza foto frente para o elemento desktop (col-left)
+          if (key === 'front') {
+            const desktopBox = document.getElementById('result-photo-front-desktop');
+            if (desktopBox) {
+              desktopBox.innerHTML = '';
+              const imgD = document.createElement('img');
+              imgD.src = src;
+              desktopBox.appendChild(imgD);
+            }
+          }
         }
       });
-      if (anyPhoto) wrap.style.display = 'flex';
+      // Sempre exibe o box — com fotos reais ou com placeholders
+      wrap.style.display = 'flex';
+      // Exibe foto frente isolada no desktop
+      const frontOnlyWrap = document.getElementById('result-photo-front-only-wrap');
+      if (frontOnlyWrap) frontOnlyWrap.style.display = 'flex';
     })();
 
     // ── Carrossel automático das fotos do scanner ──────────────────────
@@ -5421,6 +5630,12 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
             '</div>' +
           '</div>';
         }).join('');
+
+        // Sincroniza dicas para o elemento mobile-only
+        const listaMobile = document.getElementById('dicas-lista-mobile');
+        if (listaMobile) listaMobile.innerHTML = lista.innerHTML;
+        const boxDicasMobile = document.getElementById('box-dicas-inteligentes-mobile');
+        if (boxDicasMobile && !lista.innerHTML.trim()) boxDicasMobile.style.display = 'none';
 
         // Se não sobrou nenhuma dica, oculta o box inteiro
         const boxDicas = document.getElementById('box-dicas-inteligentes');
@@ -5888,6 +6103,27 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
 
     goTo('result');
 
+    // ── RADAR: renderiza após o result-overlay estar visível ──
+    setTimeout(function() {
+      if (typeof window._renderRadar !== 'function') return;
+      let scoresArr = window._radarScores;
+      if (!scoresArr) {
+        const labels = ['Hidratação','Brilho','Firmeza','Textura','Oleosidade','Sensibilidade','Rugas','Manchas'];
+        scoresArr = labels.map(function(lbl) {
+          let val = 50;
+          document.querySelectorAll('.score-pill').forEach(function(pill) {
+            const lblEl = pill.querySelector('.score-lbl');
+            const valEl = pill.querySelector('.score-val');
+            if (lblEl && valEl && lblEl.textContent.trim() === lbl) {
+              val = parseInt(valEl.textContent) || 50;
+            }
+          });
+          return val;
+        });
+      }
+      window._renderRadar(scoresArr);
+    }, 300);
+
     // Badge
     setTimeout(() => {
       if (resultBadge) resultBadge.classList.add('badge-visible');
@@ -5972,7 +6208,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
                   resultSub.style.opacity = '1';
                   // Fotos do scanner: fade in sincronizado com subtítulo
                   const photosWrap = document.getElementById('result-photos-wrap');
-                  if (photosWrap && photosWrap.style.display !== 'none') {
+                  if (photosWrap) {
                     photosWrap.style.opacity = '1';
                   }
                   setTimeout(() => { if (resultSub) resultSub.style.transition = ''; }, 1450);
@@ -6043,7 +6279,7 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       const wrap = document.getElementById('result-photos-wrap');
       if (!wrap) return;
       const map = { front: 'result-photo-front', left: 'result-photo-right', right: 'result-photo-left' };
-      let anyPhoto = false;
+
       Object.entries(map).forEach(([key, id]) => {
         const box = document.getElementById(id);
         if (!box) return;
@@ -6053,11 +6289,24 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
           const img = document.createElement('img');
           img.src = src;
           box.appendChild(img);
-          anyPhoto = true;
 
+          // Sincroniza foto frente para o elemento desktop (col-left)
+          if (key === 'front') {
+            const desktopBox = document.getElementById('result-photo-front-desktop');
+            if (desktopBox) {
+              desktopBox.innerHTML = '';
+              const imgD = document.createElement('img');
+              imgD.src = src;
+              desktopBox.appendChild(imgD);
+            }
+          }
         }
       });
-      if (anyPhoto) wrap.style.display = 'flex';
+      // Sempre exibe o box — com fotos reais ou com placeholders
+      wrap.style.display = 'flex';
+      // Exibe foto frente isolada no desktop
+      const frontOnlyWrap2 = document.getElementById('result-photo-front-only-wrap');
+      if (frontOnlyWrap2) frontOnlyWrap2.style.display = 'flex';
     })();
 
     // ── Carrossel automático das fotos do scanner ──────────────────────
@@ -6138,31 +6387,6 @@ dicasInteligentes deve conter exatamente os 5 campos: agua, protetor, alimentaca
       }
     }); // end result-boxes-ready
 
-    // ── RADAR: renderiza sempre, usando scores salvos pela IA ou lendo dos pills ──
-    window.addEventListener('result-boxes-ready', function _radarReady() {
-      window.removeEventListener('result-boxes-ready', _radarReady);
-      if (typeof window._renderRadar !== 'function') return;
-
-      let scoresArr = window._radarScores; // definido por preencherResultadoIA se IA respondeu
-
-      if (!scoresArr) {
-        // Fallback: lê diretamente dos score pills já populados no DOM
-        const labels = ['Hidratação','Brilho','Firmeza','Textura','Oleosidade','Sensibilidade','Rugas','Manchas'];
-        scoresArr = labels.map(lbl => {
-          let val = 50;
-          document.querySelectorAll('.score-pill').forEach(pill => {
-            const lblEl = pill.querySelector('.score-lbl');
-            const valEl = pill.querySelector('.score-val');
-            if (lblEl && valEl && lblEl.textContent.trim() === lbl) {
-              val = parseInt(valEl.textContent) || 50;
-            }
-          });
-          return val;
-        });
-      }
-
-      window._renderRadar(scoresArr);
-    });
   }
 
   // ── PARTÍCULAS SCREEN AGUARDANDO ──────────────────────────────────────────
