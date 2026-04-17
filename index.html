@@ -340,6 +340,11 @@
     transition: opacity 0.4s ease;
   }
 
+  /* Poster do vídeo hero — escondido em desktop */
+  #hero-video-poster {
+    display: none;
+  }
+
   /* Fade inferior do hero removido */
 
   /* Conteúdo do hero — acima da névoa (fixed z:2) e cursor (fixed z:3) via z-index:10 no contexto raiz */
@@ -1413,6 +1418,23 @@
       height: 80vw;
       width: auto;
     }
+    /* Poster visível no mobile enquanto o vídeo não reproduz */
+    #hero-video-poster {
+      display: block;
+      position: absolute;
+      bottom: 120px;
+      right: -38px;
+      left: auto;
+      top: auto;
+      height: 80vw;
+      width: auto;
+      object-fit: cover;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #hero-video-poster.poster-hidden {
+      display: none;
+    }
     .hero h1 { font-size: 34px; margin-bottom: 18px; }
     .how .section-h2 { font-size: 34px; }
     .how-header { padding: 0 25px 0 25px; }
@@ -1815,6 +1837,7 @@
 <!-- HERO -->
 <section class="hero">
   <video id="hero-video" autoplay muted playsinline webkit-playsinline preload="auto" src="videos/Hero_opt.mp4" type="video/mp4" x-webkit-airplay="deny" disableremoteplayback></video>
+  <img id="hero-video-poster" src="videos/Hero_opt_poster.jpg" alt="" aria-hidden="true">
   <!-- hero-spotlight removido (canhão migrou para .how) -->
   <div id="hero-spotlight" style="display:none;"></div>
   <div class="hero-inner">
@@ -3582,6 +3605,9 @@
     /* Revela o vídeo com fade-in só quando começar a reproduzir */
     video.addEventListener('playing', function() {
       video.style.opacity = '1';
+      /* Esconde o poster (primeiro frame estático) quando o vídeo começa */
+      var poster = document.getElementById('hero-video-poster');
+      if (poster) poster.classList.add('poster-hidden');
     }, { once: true });
 
     document.addEventListener('visibilitychange', function() {
