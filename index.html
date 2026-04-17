@@ -1417,6 +1417,8 @@
       top: auto;
       height: 80vw;
       width: auto;
+      opacity: 1;
+      transition: none;
     }
     /* Poster visível no mobile enquanto o vídeo não reproduz */
     #hero-video-poster {
@@ -1430,10 +1432,13 @@
       width: auto;
       object-fit: cover;
       pointer-events: none;
-      z-index: 0;
+      z-index: 1;
+      opacity: 1;
+      transition: opacity 0.3s ease;
     }
     #hero-video-poster.poster-hidden {
-      display: none;
+      opacity: 0;
+      pointer-events: none;
     }
     .hero h1 { font-size: 34px; margin-bottom: 18px; }
     .how .section-h2 { font-size: 34px; }
@@ -3602,12 +3607,18 @@
     video.addEventListener('canplay',        tryPlay, { once: true });
     setTimeout(tryPlay, 300);
 
-    /* Revela o vídeo com fade-in só quando começar a reproduzir */
+    /* Quando o vídeo começa a reproduzir: revela o vídeo (desktop) e faz fade out do poster (mobile) */
     video.addEventListener('playing', function() {
       video.style.opacity = '1';
-      /* Esconde o poster (primeiro frame estático) quando o vídeo começa */
+      /* Fade out suave do poster — sem display:none para evitar glitch */
       var poster = document.getElementById('hero-video-poster');
-      if (poster) poster.classList.add('poster-hidden');
+      if (poster) {
+        poster.classList.add('poster-hidden');
+        /* Remove do fluxo após a transição terminar */
+        poster.addEventListener('transitionend', function() {
+          poster.style.display = 'none';
+        }, { once: true });
+      }
     }, { once: true });
 
     document.addEventListener('visibilitychange', function() {
