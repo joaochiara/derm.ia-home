@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>derm.ia | Sua IA dermatologista</title>
+<title>dermind | Sua IA dermatologista</title>
 <link rel="icon" type="image/gif" href="favicon.gif">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -468,6 +468,7 @@
 
   .trust-text { font-size: 12px; color: var(--ink-soft); }
   .trust-text strong { color: var(--ink-soft); font-weight: 700; }
+  #trust-counter { display: inline-block; min-width: 3.2em; text-align: right; }
 
   /* ── PHONE MOCKUP ── */
   .hero-visual {
@@ -1417,8 +1418,6 @@
       top: auto;
       height: 80vw;
       width: auto;
-      opacity: 1;
-      transition: none;
     }
     /* Poster visível no mobile enquanto o vídeo não reproduz */
     #hero-video-poster {
@@ -1432,13 +1431,10 @@
       width: auto;
       object-fit: cover;
       pointer-events: none;
-      z-index: 1;
-      opacity: 1;
-      transition: opacity 0.3s ease;
+      z-index: 0;
     }
     #hero-video-poster.poster-hidden {
-      opacity: 0;
-      pointer-events: none;
+      display: none;
     }
     .hero h1 { font-size: 34px; margin-bottom: 18px; }
     .how .section-h2 { font-size: 34px; }
@@ -1514,7 +1510,7 @@
       margin-top: 0;
     }
 
-    /* Carrossel mobile — .steps é o scroll container, com padding interno */
+    /* Carrossel mobile — full-bleed: ocupa 100vw independente do padding do pai */
     .steps {
       display: flex;
       flex-direction: row;
@@ -1527,9 +1523,14 @@
       -webkit-overflow-scrolling: touch;
       gap: 20px;
       padding: 20px 20px 24px 20px;
-      margin: -45px -20px -24px -20px;
+      width: 100vw;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-top: -45px;
+      margin-bottom: -24px;
       scrollbar-width: none;
-      box-sizing: content-box;
+      box-sizing: border-box;
     }
     .steps::-webkit-scrollbar { display: none; }
     .step-cell { scroll-snap-align: start; }
@@ -1824,7 +1825,7 @@
 <div id="nav-sticky-helper">
 <nav>
   <div class="header-island">
-    <a href="#" class="nav-logo">derm<span>.ia</span></a>
+    <a href="#" class="nav-logo">derm<span>ind</span></a>
     <ul class="nav-links-desktop">
       <li><a href="#como-funciona" onclick="scrollToSection('como-funciona',-25);return false;">Como funciona</a></li>
       <li><a href="#diagnostico">Diagnóstico</a></li>
@@ -2027,7 +2028,7 @@
       </div>
       <div class="testi-card">
         <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-        <p class="testi-quote">"Gastei tanto dinheiro em produtos caros que não funcionavam. A derm.ia me indicou o que realmente faz diferença."</p>
+        <p class="testi-quote">"Gastei tanto dinheiro em produtos caros que não funcionavam. A dermind me indicou o que realmente faz diferença."</p>
         <div class="testi-author"><div class="testi-avatar" style="background:#4A7FA5">BS</div><div><div class="testi-name">Beatriz Santos</div><div class="testi-meta">34 anos · Belo Horizonte</div></div></div>
       </div>
       <div class="testi-card">
@@ -2104,8 +2105,8 @@
   <h2 class="section-h2">Tudo que você precisa saber antes de <em>começar.</em></h2>
   <div class="faq-list">
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">A derm.ia vende produtos ou só indica?</button>
-      <div class="faq-a">A derm.ia é um serviço de diagnóstico e consultoria — não vendemos nenhum produto. Indicamos os melhores produtos para o seu perfil, com links de onde comprar nas lojas que você já conhece. Você compra onde quiser.</div>
+      <button class="faq-q" onclick="toggleFaq(this)">A dermind vende produtos ou só indica?</button>
+      <div class="faq-a">A dermind é um serviço de diagnóstico e consultoria — não vendemos nenhum produto. Indicamos os melhores produtos para o seu perfil, com links de onde comprar nas lojas que você já conhece. Você compra onde quiser.</div>
     </div>
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)">Vocês têm parceria com alguma marca?</button>
@@ -2892,7 +2893,7 @@
 
   <!-- Barra inferior (linha marfim + copyright) -->
   <div class="footer-bar">
-    <span class="footer-copy"><strong class="footer-copy-highlight">© 2026 derm.ia.</strong> Todos os direitos reservados.</span>
+    <span class="footer-copy"><strong class="footer-copy-highlight">© 2026 dermind.</strong> Todos os direitos reservados.</span>
   </div>
 
   <script>
@@ -3607,18 +3608,12 @@
     video.addEventListener('canplay',        tryPlay, { once: true });
     setTimeout(tryPlay, 300);
 
-    /* Quando o vídeo começa a reproduzir: revela o vídeo (desktop) e faz fade out do poster (mobile) */
+    /* Revela o vídeo com fade-in só quando começar a reproduzir */
     video.addEventListener('playing', function() {
       video.style.opacity = '1';
-      /* Fade out suave do poster — sem display:none para evitar glitch */
+      /* Esconde o poster (primeiro frame estático) quando o vídeo começa */
       var poster = document.getElementById('hero-video-poster');
-      if (poster) {
-        poster.classList.add('poster-hidden');
-        /* Remove do fluxo após a transição terminar */
-        poster.addEventListener('transitionend', function() {
-          poster.style.display = 'none';
-        }, { once: true });
-      }
+      if (poster) poster.classList.add('poster-hidden');
     }, { once: true });
 
     document.addEventListener('visibilitychange', function() {
