@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/ava/:path*",
+      "destination": "https://dermind-quest.vercel.app/:path*"
+    }
+  ]
+}
