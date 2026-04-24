@@ -1913,7 +1913,7 @@
   <p class="section-eyebrow" id="how-eyebrow">Como funciona</p>
   <!-- Item 5: h2 com mesmo tamanho e typewriter do hero -->
   <h2 class="section-h2" id="how-h2" style="position:relative;">
-    <span id="how-h2-placeholder" style="visibility:hidden; display:block;">Em três passos, sua pele <em>finalmente decifrada</em>.</span>
+    <span id="how-h2-placeholder" style="visibility:hidden; display:block;">Em três passos, sua<span class="how-h2-br-mobile"><br></span> pele<span class="how-h2-br-desktop"><br></span> <em>finalmente decifrada</em>.</span>
     <span id="how-h2-typed-wrap" style="position:absolute; top:0; left:0; width:100%; visibility:hidden;"><span id="how-h2-typed"></span><span class="tw-cursor" id="how-tw-cursor" style="display:none;">|</span></span>
   </h2>
   <p class="how-sub" id="how-sub">Você não tem uma pele com problemas. Só não sabe que cosmético usar.</p>
@@ -3313,7 +3313,9 @@
     const CHAR_MS  = 38;
     const tokens   = [
       { text: 'Em três passos, sua', em: false },
-      { text: '', html: '<span class="how-h2-br-mobile"><br></span> pele<span class="how-h2-br-desktop"><br></span> ', raw: true },
+      { text: '', html: '<span class="how-h2-br-mobile"><br></span> ', raw: true },
+      { text: 'pele', em: false },
+      { text: '', html: '<span class="how-h2-br-desktop"><br></span> ', raw: true },
       { text: 'finalmente decifrada', em: true },
       { text: '.', em: false },
     ];
@@ -3321,17 +3323,21 @@
     let twStarted = false;
 
     function buildHTML(tokens, charCount) {
-      let html = '', remaining = charCount;
+      /* Calcula quantos chars de texto vieram antes de cada token, para decidir quando o raw deve aparecer */
+      let consumed = 0;
+      let html = '';
       for (const tok of tokens) {
         if (tok.raw) {
-          /* Raw HTML — injeta quando os tokens anteriores já foram totalmente digitados */
-          if (remaining <= 0) html += tok.html;
+          /* Raw é injetado assim que a digitação passou do último caractere do token de texto anterior,
+             e permanece visível daí em diante (não consome charCount). */
+          if (charCount >= consumed) html += tok.html;
           continue;
         }
-        if (remaining <= 0) break;
-        const slice = tok.text.slice(0, remaining);
+        if (charCount <= consumed) break;
+        const sliceLen = Math.min(tok.text.length, charCount - consumed);
+        const slice = tok.text.slice(0, sliceLen);
         html += tok.em ? `<em>${slice}</em>` : slice;
-        remaining -= tok.text.length;
+        consumed += tok.text.length;
       }
       return html;
     }
