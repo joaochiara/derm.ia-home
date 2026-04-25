@@ -163,6 +163,7 @@
       width: calc(100% - 2px);
     }
     .header-island { padding: 10px 15px; border-radius: 17px; }
+    #nav-close { top: 4px !important; right: 4px !important; }
   }
 
   .nav-logo {
@@ -1693,7 +1694,7 @@
     #nav-close {
       display: flex;
       position: absolute;
-      top: 15px; right: 40px;
+      top: 19px; right: 23px;
       width: 36px; height: 36px;
       align-items: center; justify-content: center;
       background: none; border: none; cursor: pointer;
@@ -1876,7 +1877,7 @@
       <p class="hero-sub" id="hero-sub" style="margin-top: -10px; opacity:0;">Preencha o prontuário, passe pelo scanner e receba<br>um protocolo de cuidado com a pele personalizado.</p>
       <div class="hero-actions">
         <a href="https://dermind.app/ava" class="btn-primary" id="hero-btn" style="opacity:0;">Fazer minha avaliação</a>
-        <a href="#como-funciona" class="btn-ghost" onclick="scrollToSection('como-funciona', window.innerWidth <= 900 ? -55 : -25);return false;" style="opacity:0;">Ver como funciona</a>
+        <a href="javascript:void(0)" class="btn-ghost" onclick="event.preventDefault();scrollToSection('como-funciona', window.innerWidth <= 900 ? -55 : -25);return false;" style="opacity:0;">Ver como funciona</a>
       </div>
       <div class="hero-trust" style="opacity:0;">
         <div class="trust-avatars">
@@ -3682,13 +3683,18 @@
         if (p !== undefined) {
           p.catch(function() {
             /* Autoplay bloqueado pelo browser — espera 1ª interação do usuário */
-            function onInteract() {
+            function onInteract(e) {
+              if (e && e.type === 'touchend' && e.target && e.target.closest && e.target.closest('a, button')) {
+                return;
+              }
               video.play().catch(function(){});
+              document.removeEventListener('touchstart', onInteract);
+              document.removeEventListener('touchend',   onInteract);
+              document.removeEventListener('scroll',     onInteract);
             }
-            document.addEventListener('touchstart', onInteract, { once: true, passive: true });
-            document.addEventListener('touchend',   onInteract, { once: true, passive: true });
+            document.addEventListener('touchstart', onInteract, { passive: true });
+            document.addEventListener('touchend',   onInteract, { passive: true });
             document.addEventListener('scroll',     onInteract, { once: true, passive: true });
-            document.addEventListener('click',      onInteract, { once: true, passive: true });
           });
         }
       }
