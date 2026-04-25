@@ -1443,10 +1443,12 @@
       width: auto;
       object-fit: cover;
       pointer-events: none;
-      z-index: 0;
+      z-index: 1;
+      opacity: 1;
+      transition: opacity 0.4s ease;
     }
     #hero-video-poster.poster-hidden {
-      display: none;
+      opacity: 0;
     }
     .hero h1 { font-size: 34px; margin-bottom: 18px; }
     .how .section-h2 { font-size: 34px; }
@@ -1454,7 +1456,7 @@
     .how-h2-br-desktop { display: none; }
     .how-h2-br-mobile { display: inline; }
     .how-header { padding: 0 25px 0 25px; }
-    .how-sub { font-size: 14px; margin-top: calc(-40px + 20px); max-width: 85%; white-space: normal; }
+    .how-sub { font-size: 14px; margin-top: calc(-40px + 20px); white-space: normal; }
     .step-cell:nth-child(2) { margin-top: 20px; }
     .hero-badge { font-size: 12px; }
     .hero-sub { font-size: 14px; margin-bottom: 16px; max-width: 100%; }
@@ -1928,7 +1930,7 @@
       </div>
       <div class="step">
         <div class="step-video-box">
-          <video autoplay muted loop playsinline preload="auto">
+          <video autoplay muted loop playsinline webkit-playsinline preload="auto" disablepictureinpicture disableremoteplayback x-webkit-airplay="deny">
             <source src="videos/Step_1_opt.mp4" type="video/mp4">
           </video>
         </div>
@@ -1943,7 +1945,7 @@
       </div>
       <div class="step">
         <div class="step-video-box">
-          <video autoplay muted loop playsinline preload="auto">
+          <video autoplay muted loop playsinline webkit-playsinline preload="auto" disablepictureinpicture disableremoteplayback x-webkit-airplay="deny">
             <source src="videos/Step_2_opt.mp4" type="video/mp4">
           </video>
         </div>
@@ -1958,7 +1960,7 @@
       </div>
       <div class="step">
         <div class="step-video-box">
-          <video autoplay muted loop playsinline preload="auto">
+          <video autoplay muted loop playsinline webkit-playsinline preload="auto" disablepictureinpicture disableremoteplayback x-webkit-airplay="deny">
             <source src="videos/Step_3_opt.mp4" type="video/mp4">
           </video>
         </div>
@@ -3655,14 +3657,33 @@
       video.controls = false;
       video.setAttribute('playsinline', '');
       video.setAttribute('webkit-playsinline', '');
+      video.setAttribute('disableremoteplayback', '');
 
-      function tryPlay() { video.play().catch(function(){}); }
-
-      if (video.readyState >= 2) {
-        tryPlay();
-      } else {
-        video.addEventListener('canplay', tryPlay, { once: true });
+      function tryPlay() {
+        const p = video.play();
+        if (p !== undefined) {
+          p.catch(function() {
+            /* Autoplay bloqueado pelo browser — espera 1ª interação do usuário */
+            function onInteract() {
+              video.play().catch(function(){});
+            }
+            document.addEventListener('touchstart', onInteract, { once: true, passive: true });
+            document.addEventListener('touchend',   onInteract, { once: true, passive: true });
+            document.addEventListener('scroll',     onInteract, { once: true, passive: true });
+            document.addEventListener('click',      onInteract, { once: true, passive: true });
+          });
+        }
       }
+
+      video.load();
+      video.addEventListener('loadeddata',     tryPlay, { once: true });
+      video.addEventListener('canplay',        tryPlay, { once: true });
+      video.addEventListener('canplaythrough', tryPlay, { once: true });
+      setTimeout(tryPlay, 300);
+
+      document.addEventListener('visibilitychange', function() {
+        if (!document.hidden && video.paused) tryPlay();
+      });
 
       if ('IntersectionObserver' in window) {
         new IntersectionObserver(function(entries) {
