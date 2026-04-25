@@ -393,7 +393,7 @@
     opacity: 0;
     transition: opacity 1.4s ease;
   }
-  .hero-sub.sub-visible { opacity: 1; }
+  .hero-sub.sub-visible { opacity: 1 !important; }
 
   .hero-badge {
     display: inline-flex; align-items: center; gap: 6px;
@@ -410,7 +410,7 @@
     transition: opacity 1.4s ease;
     will-change: transform;
   }
-  .hero-badge.sub-visible { opacity: 1; }
+  .hero-badge.sub-visible { opacity: 1 !important; }
   .hero-badge::before { content: '✦'; font-size: 9px; color: var(--wine); }
 
   .hero-actions {
@@ -437,7 +437,7 @@
     transform: translateY(60px);
     transition: opacity 0.52s cubic-bezier(0.22,1,0.36,1), transform 0.52s cubic-bezier(0.22,1,0.36,1);
   }
-  .hero-content .btn-primary.btn-visible { opacity: 1; transform: translateY(0); }
+  .hero-content .btn-primary.btn-visible { opacity: 1 !important; transform: translateY(0); }
   .hero-content .btn-primary.btn-ready { transition: background 0.22s, box-shadow 0.22s, transform 0.15s, opacity 0.22s; }
   .hero-content .btn-primary.btn-ready:hover { transform: translateY(-2px) scale(1.05); }
 
@@ -452,7 +452,7 @@
   }
   .btn-ghost::before { content: '↓'; font-size: 15px; }
   .btn-ghost:hover { color: var(--wine-dark); transform: scale(1.05); }
-  .btn-ghost.sub-visible { opacity: 1; }
+  .btn-ghost.sub-visible { opacity: 1 !important; }
 
   .hero-trust {
     margin-top: 48px;
@@ -460,7 +460,7 @@
     opacity: 0;
     transition: opacity 1.0s ease;
   }
-  .hero-trust.sub-visible { opacity: 1; }
+  .hero-trust.sub-visible { opacity: 1 !important; }
 
   .trust-avatars { display: flex; }
   .trust-avatars span {
@@ -1865,18 +1865,18 @@
   <div id="hero-spotlight" style="display:none;"></div>
   <div class="hero-inner">
     <div class="hero-content">
-      <p class="hero-eyebrow">Inteligência artificial para sua pele</p>
+      <p class="hero-eyebrow" style="opacity:0;">Inteligência artificial para sua pele</p>
       <h1 id="hero-title" style="position:relative;">
         <span id="hero-placeholder" style="visibility:hidden; display:block;">Melhor que uma <em>dermatologista</em> na<br>palma da sua mão.</span>
         <span style="position:absolute; top:0; left:0; width:100%;"><span id="hero-title-typed"></span><span class="tw-cursor" id="hero-tw-cursor">|</span></span>
       </h1>
-      <p class="hero-badge">Assistente de skincare com 30 dias grátis</p>
-      <p class="hero-sub" id="hero-sub" style="margin-top: -10px;">Preencha o prontuário, passe pelo scanner e receba<br>um protocolo de cuidado com a pele personalizado.</p>
+      <p class="hero-badge" style="opacity:0;">Assistente de skincare com 30 dias grátis</p>
+      <p class="hero-sub" id="hero-sub" style="margin-top: -10px; opacity:0;">Preencha o prontuário, passe pelo scanner e receba<br>um protocolo de cuidado com a pele personalizado.</p>
       <div class="hero-actions">
-        <a href="dermia-quiz-c1.html" class="btn-primary" id="hero-btn">Fazer minha avaliação</a>
-        <a href="#como-funciona" class="btn-ghost" onclick="scrollToSection('como-funciona',-25);return false;">Ver como funciona</a>
+        <a href="dermia-quiz-c1.html" class="btn-primary" id="hero-btn" style="opacity:0;">Fazer minha avaliação</a>
+        <a href="#como-funciona" class="btn-ghost" onclick="scrollToSection('como-funciona',-25);return false;" style="opacity:0;">Ver como funciona</a>
       </div>
-      <div class="hero-trust">
+      <div class="hero-trust" style="opacity:0;">
         <div class="trust-avatars">
           <span class="ta1">AM</span>
           <span class="ta2">BL</span>
