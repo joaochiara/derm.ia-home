@@ -163,7 +163,7 @@
       width: calc(100% - 2px);
     }
     .header-island { padding: 10px 15px; border-radius: 17px; }
-    #nav-close { top: 4px !important; right: 4px !important; }
+    #nav-close { top: 10px !important; right: 14px !important; }
   }
 
   .nav-logo {
@@ -451,7 +451,9 @@
     will-change: transform;
   }
   .btn-ghost::before { content: '↓'; font-size: 15px; }
-  .btn-ghost:hover { color: var(--wine-dark); transform: scale(1.05); }
+  @media (hover: hover) {
+    .btn-ghost:hover { color: var(--wine-dark); transform: scale(1.05); }
+  }
   .btn-ghost.sub-visible { opacity: 1 !important; }
 
   .hero-trust {
@@ -1877,7 +1879,7 @@
       <p class="hero-sub" id="hero-sub" style="margin-top: -10px; opacity:0;">Preencha o prontuário, passe pelo scanner e receba<br>um protocolo de cuidado com a pele personalizado.</p>
       <div class="hero-actions">
         <a href="https://dermind.app/ava" class="btn-primary" id="hero-btn" style="opacity:0;">Fazer minha avaliação</a>
-        <a href="javascript:void(0)" class="btn-ghost" onclick="event.preventDefault();scrollToSection('como-funciona', window.innerWidth <= 900 ? -55 : -25);return false;" style="opacity:0;">Ver como funciona</a>
+        <button type="button" class="btn-ghost" onclick="scrollToSection('como-funciona', window.innerWidth <= 900 ? -55 : -25);" style="opacity:0;">Ver como funciona</button>
       </div>
       <div class="hero-trust" style="opacity:0;">
         <div class="trust-avatars">
