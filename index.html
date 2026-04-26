@@ -3450,6 +3450,12 @@
     const HOVER_LIFT       = -6;
     const HOVER_SHADOW_ON  = '0 2px 0px rgba(255,255,255,0.70), 0 22px 44px rgba(24,16,14,0.16), 0 1px 0 rgba(255,255,255,0.90) inset, 0 -1px 0 rgba(0,0,0,0.06) inset';
     const HOVER_SHADOW_OFF = '0 2px 0px rgba(255,255,255,0.70), 0 6px 18px rgba(24,16,14,0.10), 0 1px 0 rgba(255,255,255,0.90) inset, 0 -1px 0 rgba(0,0,0,0.06) inset';
+    /* Mobile flag — desativa hover upscale/lift/shadow em telas ≤ 480px (mesmo breakpoint do CSS).
+       Avaliado uma vez e reavaliado em resize para evitar checagem por frame. */
+    let IS_MOBILE = window.matchMedia('(max-width: 480px)').matches;
+    window.addEventListener('resize', () => {
+      IS_MOBILE = window.matchMedia('(max-width: 480px)').matches;
+    });
     const t0global   = performance.now();
 
     function entryOffset(p, now) {
@@ -3527,15 +3533,17 @@
         };
       }).filter(Boolean);
 
-      /* Hover upscale — mouseenter/mouseleave por step */
+      /* Hover upscale — mouseenter/mouseleave por step (desativado no mobile) */
       hoverState = stepEls.map(() => ({ target: 0, current: 0 }));
       stepEls.forEach((el, i) => {
         const cell = el.closest('.step-cell');
         el.addEventListener('mouseenter', () => {
+          if (IS_MOBILE) return;
           hoverState[i].target = 1;
           if (cell) cell.style.zIndex = '10';
         });
         el.addEventListener('mouseleave', () => {
+          if (IS_MOBILE) return;
           hoverState[i].target = 0;
           if (cell) cell.style.zIndex = '';
         });
@@ -3552,6 +3560,8 @@
         const p = stepParams[i];
         const h = hoverState[i];
 
+        /* Mobile: força estado neutro independente do que o evento setou */
+        if (IS_MOBILE) { h.target = 0; h.current = 0; }
         /* Interpola suavemente 0→1 e 1→0 */
         h.current += (h.target - h.current) * 0.10;
         const hv = h.current;
