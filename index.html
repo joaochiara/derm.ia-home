@@ -259,9 +259,12 @@
     left: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden; /* corte absoluto — nada vaza fora da .how */
+    overflow: hidden; /* contém o feixe horizontalmente; verticalmente o fade abaixo cuida do término */
     pointer-events: none;
     z-index: 0;   /* mais baixo: fundo marfim */
+    /* Fade-out gradual no rodapé — luz se apaga suavemente atrás do CTA ao invés de cortar abrupto */
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 70%, rgba(0,0,0,0.6) 85%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, #000 0%, #000 70%, rgba(0,0,0,0.6) 85%, rgba(0,0,0,0) 100%);
   }
 
   /* Feixe principal — translação horizontal suave, sem rotação */
