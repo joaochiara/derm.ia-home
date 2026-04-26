@@ -1274,7 +1274,7 @@
   /* ── CTA COM ORELHAS — arquitetura idêntica ao footer ── */
   #cta-eared {
     position: relative;
-    margin: 35px 48px 80px;
+    margin: 20px 48px 80px;
     padding: 76px 60px;      /* mesmo padding do .cta-final original */
     text-align: center;
     background: transparent; /* cor vem do SVG absoluto */
@@ -1292,6 +1292,9 @@
     color: var(--ivory); line-height: 1.1;
     letter-spacing: -0.02em; margin-bottom: 14px;
     padding-bottom: 15px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
   }
   #cta-eared-content h2 em { color: var(--blush); font-style: italic; }
   #cta-eared-content p {
@@ -1562,9 +1565,15 @@
     }
     .step-cell:nth-child(3) { scroll-snap-align: end; }
 
-    /* CTA EARED — apenas mobile: desce 15px e ocupa largura quase total (10px lateral) */
+    /* CTA EARED — apenas mobile: desce 15px, ocupa largura quase total (10px lateral),
+       e padding lateral de 30px para que o h2 fique a 30px de cada borda do box */
     #cta-eared {
       margin: 50px 10px 80px;
+      padding: 76px 30px;
+    }
+    /* h2 ocupa 100% da área interna no mobile (= 30px de cada borda do box) */
+    #cta-eared-content h2 {
+      max-width: none;
     }
 
     /* POWERS */
