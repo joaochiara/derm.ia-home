@@ -1541,13 +1541,16 @@
       scroll-padding-inline: 20px;
       -webkit-overflow-scrolling: touch;
       gap: 20px;
-      padding: 20px 20px 24px 20px;
+      /* Padding vertical extra (60px topo, 60px base) acomoda a sombra e o lift do step ativo —
+         o overflow-x:scroll força overflow-y:auto na spec CSS, então a sombra precisa caber
+         dentro do próprio .steps. As margens negativas abaixo compensam visualmente. */
+      padding: 60px 20px 60px 20px;
       width: 100vw;
       position: relative;
       left: 50%;
       transform: translateX(-50%);
-      margin-top: -45px;
-      margin-bottom: -24px;
+      margin-top: -85px;     /* -45 original + -40 para compensar padding extra do topo (60-20) */
+      margin-bottom: -60px;  /* -24 original + -36 para compensar padding extra da base (60-24) */
       scrollbar-width: none;
       box-sizing: border-box;
     }
