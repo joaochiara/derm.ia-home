@@ -1541,16 +1541,16 @@
       scroll-padding-inline: 20px;
       -webkit-overflow-scrolling: touch;
       gap: 20px;
-      /* Padding vertical extra (60px topo, 60px base) acomoda a sombra e o lift do step ativo —
+      /* Padding vertical extra (100px topo, 100px base) acomoda a sombra e o lift do step ativo —
          o overflow-x:scroll força overflow-y:auto na spec CSS, então a sombra precisa caber
          dentro do próprio .steps. As margens negativas abaixo compensam visualmente. */
-      padding: 60px 20px 60px 20px;
+      padding: 100px 20px 100px 20px;
       width: 100vw;
       position: relative;
       left: 50%;
       transform: translateX(-50%);
-      margin-top: -85px;     /* -45 original + -40 para compensar padding extra do topo (60-20) */
-      margin-bottom: -60px;  /* -24 original + -36 para compensar padding extra da base (60-24) */
+      margin-top: -125px;    /* -45 original + -80 para compensar padding extra do topo (100-20) */
+      margin-bottom: -100px; /* -24 original + -76 para compensar padding extra da base (100-24) */
       scrollbar-width: none;
       box-sizing: border-box;
     }
@@ -1561,6 +1561,11 @@
       scroll-margin-inline-start: -10px;
     }
     .step-cell:nth-child(3) { scroll-snap-align: end; }
+
+    /* CTA EARED — apenas mobile: desce 15px e ocupa largura quase total (10px lateral) */
+    #cta-eared {
+      margin: 50px 10px 80px;
+    }
 
     /* POWERS */
     .powers {
