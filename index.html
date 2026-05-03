@@ -1303,6 +1303,11 @@
     margin-right: auto;
   }
   #cta-eared-content h2 em { color: var(--blush); font-style: italic; }
+  /* .mobile-br: <br> que só aparece no mobile (no desktop o texto fica em fluxo livre) */
+  .mobile-br { display: none; }
+  @media (max-width: 580px) {
+    .mobile-br { display: initial; }
+  }
   #cta-eared-content p {
     font-size: 14px; color: rgba(247,242,234,0.55);
     margin-bottom: 22px;
@@ -2094,7 +2099,7 @@
   </div>
   <div id="cta-eared-content">
     <h2 id="cta-eared-h2" style="position:relative;">
-      <span id="cta-eared-h2-placeholder" style="visibility:hidden; display:block;">Muito mais do que uma especialista poderia fazer por <em>R$ 19,90/mês</em>.</span>
+      <span id="cta-eared-h2-placeholder" style="visibility:hidden; display:block;">Muito mais do que<br class="mobile-br"> uma especialista<br class="mobile-br"> poderia fazer<br class="mobile-br"> por <em>R$ 19,90/mês</em>.</span>
       <span id="cta-eared-h2-typed-wrap" style="position:absolute; top:0; left:0; width:100%; visibility:hidden;"><span id="cta-eared-h2-typed"></span><span class="tw-cursor" id="cta-eared-tw-cursor" style="display:none;">|</span></span>
     </h2>
     <p class="cta-eared-fade" id="cta-eared-p1">Nossa IA foi treinada com um banco de dados de mais de 8,3 milhões de arquivos entre artigos de dermatologia, publicações científicas, opiniões de especialistas, fóruns de skincare, guias de cosméticos, etc.</p>
@@ -5939,7 +5944,7 @@ body {
               </div>
               <div class=&quot;routine-group&quot;>
                 <span class=&quot;rs-period&quot;>⏾ Noturno</span>
-                <div class=&quot;routine-group-cards&quot; id=&quot;rotina-noturna-cards&quot;><div class=&quot;routine-step&quot;><img src=&quot;imagens/017_opt.jpg&quot; alt=&quot;Gel de Limpeza Acne Control&quot; style=&quot;width:56px;height:56px;object-fit:contain;background:#fff;border-radius:16px;flex-shrink:0;box-shadow:0 2px 8px rgba(168,85,104,0.15),inset 0 1px 0 rgba(255,255,255,0.6);position:relative;z-index:1;&quot; onerror=&quot;this.outerHTML='&amp;lt;div style=&amp;quot;width:44px;height:44px;border-radius:10px;background:var(--wine-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;font-weight:600;color:var(--wine);&amp;quot;&amp;gt;G&amp;lt;/div&amp;gt;'&quot;><span class=&quot;prod-fit&quot; style=&quot;position:relative;z-index:1;align-self:flex-start;text-transform:none;letter-spacing:0;font-weight:500;&quot;>R$ 59,90</span><div class=&quot;rs-part2&quot; style=&quot;position:relative;z-index:1;width:100%;flex-basis:100%;&quot;><div class=&quot;rs-prod-type&quot;>Limpeza profunda</div><div class=&quot;rs-prod-name&quot;>Gel de Limpeza Acne Control</div><div class=&quot;rs-prod-brand&quot;>CeraVe</div><div class=&quot;rs-prod-instr&quot;>Massageie por 1 min, remova com água</div></div></div><div class=&quot;routine-step&quot;><img src=&quot;imagens/105_opt.jpg&quot; alt=&quot;Retinol 0.5% in Squalane&quot; style=&quot;width:56px;height:56px;object-fit:contain;background:#fff;border-radius:16px;flex-shrink:0;box-shadow:0 2px 8px rgba(168,85,104,0.15),inset 0 1px 0 rgba(255,255,255,0.6);position:relative;z-index:1;&quot; onerror=&quot;this.outerHTML='&amp;lt;div style=&amp;quot;width:44px;height:44px;border-radius:10px;background:var(--wine-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;font-weight:600;color:var(--wine);&amp;quot;&amp;gt;R&amp;lt;/div&amp;gt;'&quot;><span class=&quot;prod-fit&quot; style=&quot;position:relative;z-index:1;align-self:flex-start;text-transform:none;letter-spacing:0;font-weight:500;&quot;>R$ 99,00</span><div class=&quot;rs-part2&quot; style=&quot;position:relative;z-index:1;width:100%;flex-basis:100%;&quot;><div class=&quot;rs-prod-type&quot;>Renovação celular</div><div class=&quot;rs-prod-name&quot;>Retinol 0.5% in Squalane</div><div class=&quot;rs-prod-brand&quot;>The Ordinary</div><div class=&quot;rs-prod-instr&quot;>Noites alternadas, comece 2x na semana</div></div></div><div class=&quot;routine-step&quot;><img src=&quot;imagens/106_opt.jpg&quot; alt=&quot;Natural Moisturizing Factors + HA&quot; style=&quot;width:56px;height:56px;object-fit:contain;background:#fff;border-radius:16px;flex-shrink:0;box-shadow:0 2px 8px rgba(168,85,104,0.15),inset 0 1px 0 rgba(255,255,255,0.6);position:relative;z-index:1;&quot; onerror=&quot;this.outerHTML='&amp;lt;div style=&amp;quot;width:44px;height:44px;border-radius:10px;background:var(--wine-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;font-weight:600;color:var(--wine);&amp;quot;&amp;gt;N&amp;lt;/div&amp;gt;'&quot;><span class=&quot;prod-fit&quot; style=&quot;position:relative;z-index:1;align-self:flex-start;text-transform:none;letter-spacing:0;font-weight:500;&quot;>R$ 79,00</span><div class=&quot;rs-part2&quot; style=&quot;position:relative;z-index:1;width:100%;flex-basis:100%;&quot;><div class=&quot;rs-prod-type&quot;>Hidratação reparadora</div><div class=&quot;rs-prod-name&quot;>Natural Moisturizing Factors + HA</div><div class=&quot;rs-prod-brand&quot;>The Ordinary</div><div class=&quot;rs-prod-instr&quot;>Quantidade generosa sobre toda face</div></div></div><div class=&quot;routine-step&quot;><img src=&quot;imagens/023_opt.jpg&quot; alt=&quot;Creme Reparador para Olhos&quot; style=&quot;width:56px;height:56px;object-fit:contain;background:#fff;border-radius:16px;flex-shrink:0;box-shadow:0 2px 8px rgba(168,85,104,0.15),inset 0 1px 0 rgba(255,255,255,0.6);position:relative;z-index:1;&quot; onerror=&quot;this.outerHTML='&amp;lt;div style=&amp;quot;width:44px;height:44px;border-radius:10px;background:var(--wine-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;font-weight:600;color:var(--wine);&amp;quot;&amp;gt;C&amp;lt;/div&amp;gt;'&quot;><span class=&quot;prod-fit&quot; style=&quot;position:relative;z-index:1;align-self:flex-start;text-transform:none;letter-spacing:0;font-weight:500;&quot;>R$ 109,90</span><div class=&quot;rs-part2&quot; style=&quot;position:relative;z-index:1;width:100%;flex-basis:100%;&quot;><div class=&quot;rs-prod-type&quot;>Tratamento de olheiras</div><div class=&quot;rs-prod-name&quot;>Creme Reparador para Olhos</div><div class=&quot;rs-prod-brand&quot;>CeraVe</div><div class=&quot;rs-prod-instr&quot;>Toque suave na região periorbital</div></div></div></div>
+                <div class=&quot;routine-group-cards&quot; id=&quot;rotina-noturna-cards&quot;><div class=&quot;routine-step&quot;><img src=&quot;imagens/017_opt.jpg&quot; alt=&quot;Gel de Limpeza Acne Control&quot; style=&quot;width:56px;height:56px;object-fit:contain;background:#fff;border-radius:16px;flex-shrink:0;box-shadow:0 2px 8px rgba(168,85,104,0.15),inset 0 1px 0 rgba(255,255,255,0.6);position:relative;z-index:1;&quot; onerror=&quot;this.outerHTML='&amp;lt;div style=&amp;quot;width:44px;height:44px;border-radius:10px;background:var(--wine-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;font-weight:600;color:var(--wine);&amp;quot;&amp;gt;G&amp;lt;/div&amp;gt;'&quot;><span class=&quot;prod-fit&quot; style=&quot;position:relative;z-index:1;align-self:flex-start;text-transform:none;letter-spacing:0;font-weight:500;&quot;>R$ 59,90</span><div class=&quot;rs-part2&quot; style=&quot;position:relative;z-index:1;width:100%;flex-basis:100%;&quot;><div class=&quot;rs-prod-type&quot;>Limpeza profunda</div><div class=&quot;rs-prod-name&quot;>Gel de Limpeza Acne Control</div><div class=&quot;rs-prod-brand&quot;>CeraVe</div><div class=&quot;rs-prod-instr&quot;>Massageie por 1 min, remova com água morna</div></div></div><div class=&quot;routine-step&quot;><img src=&quot;imagens/105_opt.jpg&quot; alt=&quot;Retinol 0.5% in Squalane&quot; style=&quot;width:56px;height:56px;object-fit:contain;background:#fff;border-radius:16px;flex-shrink:0;box-shadow:0 2px 8px rgba(168,85,104,0.15),inset 0 1px 0 rgba(255,255,255,0.6);position:relative;z-index:1;&quot; onerror=&quot;this.outerHTML='&amp;lt;div style=&amp;quot;width:44px;height:44px;border-radius:10px;background:var(--wine-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;font-weight:600;color:var(--wine);&amp;quot;&amp;gt;R&amp;lt;/div&amp;gt;'&quot;><span class=&quot;prod-fit&quot; style=&quot;position:relative;z-index:1;align-self:flex-start;text-transform:none;letter-spacing:0;font-weight:500;&quot;>R$ 99,00</span><div class=&quot;rs-part2&quot; style=&quot;position:relative;z-index:1;width:100%;flex-basis:100%;&quot;><div class=&quot;rs-prod-type&quot;>Renovação celular</div><div class=&quot;rs-prod-name&quot;>Retinol 0.5% in Squalane</div><div class=&quot;rs-prod-brand&quot;>The Ordinary</div><div class=&quot;rs-prod-instr&quot;>Noites alternadas, comece 2x na semana</div></div></div><div class=&quot;routine-step&quot;><img src=&quot;imagens/106_opt.jpg&quot; alt=&quot;Natural Moisturizing Factors + HA&quot; style=&quot;width:56px;height:56px;object-fit:contain;background:#fff;border-radius:16px;flex-shrink:0;box-shadow:0 2px 8px rgba(168,85,104,0.15),inset 0 1px 0 rgba(255,255,255,0.6);position:relative;z-index:1;&quot; onerror=&quot;this.outerHTML='&amp;lt;div style=&amp;quot;width:44px;height:44px;border-radius:10px;background:var(--wine-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;font-weight:600;color:var(--wine);&amp;quot;&amp;gt;N&amp;lt;/div&amp;gt;'&quot;><span class=&quot;prod-fit&quot; style=&quot;position:relative;z-index:1;align-self:flex-start;text-transform:none;letter-spacing:0;font-weight:500;&quot;>R$ 79,00</span><div class=&quot;rs-part2&quot; style=&quot;position:relative;z-index:1;width:100%;flex-basis:100%;&quot;><div class=&quot;rs-prod-type&quot;>Hidratação reparadora</div><div class=&quot;rs-prod-name&quot;>Natural Moisturizing Factors + HA</div><div class=&quot;rs-prod-brand&quot;>The Ordinary</div><div class=&quot;rs-prod-instr&quot;>Quantidade generosa sobre toda face</div></div></div><div class=&quot;routine-step&quot;><img src=&quot;imagens/023_opt.jpg&quot; alt=&quot;Creme Reparador para Olhos&quot; style=&quot;width:56px;height:56px;object-fit:contain;background:#fff;border-radius:16px;flex-shrink:0;box-shadow:0 2px 8px rgba(168,85,104,0.15),inset 0 1px 0 rgba(255,255,255,0.6);position:relative;z-index:1;&quot; onerror=&quot;this.outerHTML='&amp;lt;div style=&amp;quot;width:44px;height:44px;border-radius:10px;background:var(--wine-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;font-weight:600;color:var(--wine);&amp;quot;&amp;gt;C&amp;lt;/div&amp;gt;'&quot;><span class=&quot;prod-fit&quot; style=&quot;position:relative;z-index:1;align-self:flex-start;text-transform:none;letter-spacing:0;font-weight:500;&quot;>R$ 109,90</span><div class=&quot;rs-part2&quot; style=&quot;position:relative;z-index:1;width:100%;flex-basis:100%;&quot;><div class=&quot;rs-prod-type&quot;>Tratamento de olheiras</div><div class=&quot;rs-prod-name&quot;>Creme Reparador para Olhos</div><div class=&quot;rs-prod-brand&quot;>CeraVe</div><div class=&quot;rs-prod-instr&quot;>Toque suave na região periorbital</div></div></div></div>
               </div>
               <div class=&quot;routine-group&quot; id=&quot;rotina-semanal-group&quot;>
                 <span class=&quot;rs-period&quot;>➤ Semanal</span>
@@ -12809,9 +12814,12 @@ body {
 
     const CHAR_MS = 38;
     const tokens = [
-      { text: 'Muito mais do que uma especialista poderia fazer por ', em: false },
-      { text: 'R$ 19,90/mês', em: true },
-      { text: '.', em: false },
+      { text: 'Muito mais do que',  em: false, brAfter: true  },
+      { text: ' uma especialista',  em: false, brAfter: true  },
+      { text: ' poderia fazer',     em: false, brAfter: true  },
+      { text: ' por ',              em: false, brAfter: false },
+      { text: 'R$ 19,90/mês',       em: true,  brAfter: false },
+      { text: '.',                  em: false, brAfter: false },
     ];
     const totalChars = tokens.reduce((n, t) => n + t.text.length, 0);
     let twStarted = false;
@@ -12825,6 +12833,10 @@ body {
         const slice = tok.text.slice(0, sliceLen);
         html += tok.em ? `<em>${slice}</em>` : slice;
         consumed += tok.text.length;
+        /* só insere o <br> quando o token foi 100% digitado */
+        if (tok.brAfter && charCount >= consumed) {
+          html += '<br class="mobile-br">';
+        }
       }
       return html;
     }
@@ -12836,8 +12848,12 @@ body {
       typedWrap.style.visibility = 'visible';
       cursor.style.display = 'inline';
 
-      /* Char index em que começa o <em>R$ 19,90/mês</em> — após o primeiro token */
-      const emStartChar = tokens[0].text.length;
+      /* Char index em que começa o primeiro token <em> (R$ 19,90/mês) */
+      let emStartChar = 0;
+      for (const t of tokens) {
+        if (t.em) break;
+        emStartChar += t.text.length;
+      }
       const p1 = document.getElementById('cta-eared-p1');
       const p2 = document.getElementById('cta-eared-p2');
       let pTriggered = false;
