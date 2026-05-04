@@ -1423,14 +1423,17 @@
     .logos-wrapper {
       background-color: var(--ivory);
     }
-    /* Extensão abaixo da logos-strip para cobrir gap até a .how */
+    /* Extensão abaixo da logos-strip para cobrir gap até a .how.
+       Mantém-se pequena (20px) para não cobrir o canvas do dot-grid que
+       começa logo em seguida — antes eram 200px, o que ocultava os pontos
+       no topo da seção "Como funciona" no mobile. */
     .logos-wrapper::after {
       content: '';
       display: block;
       position: absolute;
       left: 0; right: 0;
       top: 100%;
-      height: 200px;
+      height: 20px;
       background: var(--ivory);
       z-index: 3;
     }
@@ -12122,6 +12125,10 @@ body {
     const WAVE_R     = 1.2;
     const BASE_ALPHA = 0.18;
     const WAVE_ALPHA = 0.75;
+    /* Fade apenas na base do canvas — sem fade no topo. Antes o fade era
+       proporcional à altura (18% topo + 18% base); no mobile, com a seção
+       muito mais alta por conta dos passos empilhados, isso criava uma
+       faixa enorme sem pontos no topo. */
     const FADE_ZONE  = 0.18;
 
     let W, H, dots = [];
@@ -12153,8 +12160,8 @@ body {
     function applyFadeMask() {
       const fadeH = H * FADE_ZONE;
       const grad = ctx.createLinearGradient(0, 0, 0, H);
-      grad.addColorStop(0,             'rgba(0,0,0,0)');
-      grad.addColorStop(fadeH / H,     'rgba(0,0,0,1)');
+      /* Sem fade no topo: opaco do início até onde começa o fade da base */
+      grad.addColorStop(0,             'rgba(0,0,0,1)');
       grad.addColorStop(1 - fadeH / H, 'rgba(0,0,0,1)');
       grad.addColorStop(1,             'rgba(0,0,0,0)');
       ctx.globalCompositeOperation = 'destination-in';
