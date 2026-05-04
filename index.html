@@ -2147,7 +2147,7 @@
   </div>
   <div id="cta-eared-content">
     <h2 id="cta-eared-h2" style="position:relative;">
-      <span id="cta-eared-h2-placeholder" style="visibility:hidden; display:block;">Descubra tudo o<br class="mobile-br"> que é possível<br class="mobile-br"> avaliar por<br class="mobile-br"><em> R$ 19,90/mês</em>.</span>
+      <span id="cta-eared-h2-placeholder" style="visibility:hidden; display:block;">Descubra tudo o<br class="mobile-br"> que é possível<br class="mobile-br"> avaliar por só<br class="mobile-br"><em> R$ 19,90/mês</em>.</span>
       <span id="cta-eared-h2-typed-wrap" style="position:absolute; top:0; left:0; width:100%; visibility:hidden;"><span id="cta-eared-h2-typed"></span><span class="tw-cursor" id="cta-eared-tw-cursor" style="display:none;">|</span></span>
     </h2>
     <p class="cta-eared-fade" id="cta-eared-p1">Nossa IA foi treinada com um banco de dados de mais de 8,3 milhões de arquivos entre artigos de dermatologia, publicações científicas, opiniões de especialistas, fóruns de skincare, guias de cosméticos, etc.</p>
@@ -12923,7 +12923,7 @@ body {
     const tokens = [
       { text: 'Descubra tudo o',  em: false, brAfter: true  },
       { text: ' que é possível',  em: false, brAfter: true  },
-      { text: ' avaliar por',     em: false, brAfter: true  },
+      { text: ' avaliar por só',     em: false, brAfter: true  },
       { text: ' R$ 19,90/mês',       em: true,  brAfter: false },
       { text: '.',                  em: false, brAfter: false },
     ];
@@ -12957,7 +12957,7 @@ body {
       /* Char index logo após a palavra "pode" (dentro do token " pode avaliar por").
          Calculado somando o tamanho dos tokens anteriores ao token que contém "pode"
          + a posição final de "pode" dentro daquele token. */
-      const PODE_TOKEN = ' pode avaliar por';
+      const PODE_TOKEN = ' pode avaliar por só';
       const PODE_WORD  = 'pode';
       let podeEndChar = 0;
       for (const t of tokens) {
