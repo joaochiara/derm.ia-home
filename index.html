@@ -1978,7 +1978,7 @@
     <span></span><span></span>
   </button>
   <li><a href="#como-funciona" onclick="scrollToSection('como-funciona',-25);closeMenu();return false;">Como funciona</a></li>
-  <li><a href="#diagnostico" onclick="closeMenu()">Diagnóstico</a></li>
+  <li><a href="#cta-eared" onclick="scrollToCtaEared(-95);closeMenu();return false;">Avaliação</a></li>
   <li><a href="#planos" onclick="closeMenu()">Planos</a></li>
   <li><a href="#faq" onclick="closeMenu()">FAQ</a></li>
   <li><a href="https://dermind.app/ava" class="nav-cta" onclick="closeMenu()">Começar agora</a></li>
@@ -1990,7 +1990,7 @@
     <a href="#" class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">derm<span>ind</span></a>
     <ul class="nav-links-desktop">
       <li><a href="#como-funciona" onclick="scrollToSection('como-funciona',-25);return false;">Como funciona</a></li>
-      <li><a href="#diagnostico">Diagnóstico</a></li>
+      <li><a href="#cta-eared" onclick="scrollToCtaEared(-153);return false;">Avaliação</a></li>
       <li><a href="#planos">Planos</a></li>
       <li><a href="#faq">FAQ</a></li>
       <li><a href="https://dermind.app/ava" class="nav-cta">Começar agora</a></li>
@@ -11134,6 +11134,23 @@ body {
   function scrollToSection(id, offset) {
     var el = document.getElementById(id);
     if (!el) return;
+    var y = el.getBoundingClientRect().top + window.scrollY + (offset || 0);
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }
+  /* Wrapper p/ o link "Avaliação": força o cta-eared a entrar no estado final
+     ANTES de medir a posição. Sem isso, no 1º clique o box ainda está com
+     translateY(40px) e o scroll para 40px abaixo do alvo correto. */
+  function scrollToCtaEared(offset) {
+    var el = document.getElementById('cta-eared');
+    if (!el) return;
+    /* Se ainda não está visível, aplica o estado final (sem transição) e força reflow */
+    if (!el.classList.contains('cta-eared-visible')) {
+      var prevTransition = el.style.transition;
+      el.style.transition = 'none';
+      el.classList.add('cta-eared-visible');
+      void el.offsetHeight; /* reflow — garante que o transform foi removido antes de medir */
+      el.style.transition = prevTransition;
+    }
     var y = el.getBoundingClientRect().top + window.scrollY + (offset || 0);
     window.scrollTo({ top: y, behavior: 'smooth' });
   }
