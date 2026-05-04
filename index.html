@@ -1374,6 +1374,22 @@
   }
   .cta-eared-btn:hover { background: var(--white) !important; }
 
+  /* ── Botão "Começar" do CTA-eared (novo) ── */
+  #cta-eared-btn {
+    width: 600px;
+    max-width: 100%;
+    justify-content: center;
+  }
+  #cta-eared-btn:hover {
+    background: var(--wine-light) !important;
+    box-shadow: 0 6px 22px rgba(217,168,178,0.55), inset 0 1px 0 rgba(255,255,255,0.35) !important;
+    transform: translateY(-2px) scale(1.05);
+  }
+  /* Mobile: sobe o botão 20px (margin-top do wrapper era 32px → 12px) */
+  @media (max-width: 580px) {
+    #cta-eared-btn-wrap { margin-top: 0px !important; }
+  }
+
   /* ── Pílula WhatsApp footer ── */
   .footer-wa-pill {
     transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
@@ -1622,7 +1638,7 @@
        e padding lateral de 30px para que o h2 fique a 30px de cada borda do box */
     #cta-eared {
       margin: 50px 10px 80px;
-      padding: 76px 30px 16px;
+      padding: 76px 30px 51px;
     }
     /* h2 ocupa 100% da área interna no mobile (= 30px de cada borda do box) */
     #cta-eared-content h2 {
@@ -2131,7 +2147,7 @@
   </div>
   <div id="cta-eared-content">
     <h2 id="cta-eared-h2" style="position:relative;">
-      <span id="cta-eared-h2-placeholder" style="visibility:hidden; display:block;">Descubra tudo o<br class="mobile-br"> que a especialista<br class="mobile-br"> pode avaliar por<br class="mobile-br"><em> R$ 19,90/mês</em>.</span>
+      <span id="cta-eared-h2-placeholder" style="visibility:hidden; display:block;">Descubra tudo o<br class="mobile-br"> que é possível<br class="mobile-br"> avaliar por<br class="mobile-br"><em> R$ 19,90/mês</em>.</span>
       <span id="cta-eared-h2-typed-wrap" style="position:absolute; top:0; left:0; width:100%; visibility:hidden;"><span id="cta-eared-h2-typed"></span><span class="tw-cursor" id="cta-eared-tw-cursor" style="display:none;">|</span></span>
     </h2>
     <p class="cta-eared-fade" id="cta-eared-p1">Nossa IA foi treinada com um banco de dados de mais de 8,3 milhões de arquivos entre artigos de dermatologia, publicações científicas, opiniões de especialistas, fóruns de skincare, guias de cosméticos, etc.</p>
@@ -10953,6 +10969,9 @@ body {
 </body>
 </html>" loading="lazy" sandbox="allow-scripts allow-same-origin" title="Demo do app dermind (mobile)"></iframe>
     </div>
+    <div id="cta-eared-btn-wrap" style="text-align:center; margin-top:32px;">
+      <a href="https://dermind.app/ava" class="btn-primary" id="cta-eared-btn" style="background:var(--blush); box-shadow:0 4px 18px rgba(217,168,178,0.45), inset 0 1px 0 rgba(255,255,255,0.30);">Começar avaliação</a>
+    </div>
   </div>
 </div>
 
@@ -12903,8 +12922,8 @@ body {
     const CHAR_MS = 38;
     const tokens = [
       { text: 'Descubra tudo o',  em: false, brAfter: true  },
-      { text: ' que a especialista',  em: false, brAfter: true  },
-      { text: ' pode avaliar por',     em: false, brAfter: true  },
+      { text: ' que é possível',  em: false, brAfter: true  },
+      { text: ' avaliar por',     em: false, brAfter: true  },
       { text: ' R$ 19,90/mês',       em: true,  brAfter: false },
       { text: '.',                  em: false, brAfter: false },
     ];
